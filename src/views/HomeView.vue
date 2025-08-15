@@ -69,12 +69,27 @@
     <!-- Image Paths -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div>
-        <label class="form-label">Signature Image Path</label>
-        <input v-model="form.signature_image_path" type="text" class="form-input" />
+        <label class="form-label">Signature</label>
+        <canvas ref="signatureCanvas" class="border w-full h-40 bg-white cursor-crosshair touch-none" style="touch-action: none;"></canvas>
+        <div class="mt-2 space-x-2">
+          <button type="button" @click="clearSignature" class="px-3 py-1 bg-gray-300 hover:bg-gray-400">Clear</button>
+          <button type="button" @click="saveSignature" class="px-3 py-1 bg-green-500 text-white hover:bg-green-600">Save</button>
+        </div>
+        <div v-if="form.signature_image_path" class="mt-2">
+          <p class="text-sm text-gray-600 mb-1">Signature Preview:</p>
+          <img :src="form.signature_image_path" alt="Signature Preview" class="h-20 object-contain border" />
+        </div>
       </div>
       <div>
-        <label class="form-label">Logo Image Path</label>
-        <input v-model="form.logo_image_path" type="text" class="form-input" />
+        <label class="form-label">Logo</label>
+        <input ref="logoFileInput" type="file" @change="handleLogoUpload" accept=".jpg,.jpeg,.png,.gif" class="form-input" />
+        <div v-if="form.logo_preview" class="mt-2">
+          <p class="text-sm text-gray-600 mb-1">Logo Preview:</p>
+          <img :src="form.logo_preview" alt="Logo Preview" class="h-20 object-contain border" />
+          <button type="button" @click="clearLogo" class="mt-2 px-3 py-1 bg-red-500 text-white hover:bg-red-600 text-sm">
+            Remove Logo
+          </button>
+        </div>
       </div>
     </div>
 
@@ -116,10 +131,25 @@
      <div class="w-[calc(100%+24px)] h-[1px] relative">
       <div class="absolute w-[calc(100%+24px)] top-0 -left-6 h-[1px] bg-green-500"></div>
      </div>
-    <div>
-      <button type="submit" class="px-6 py-2 bg-green-700 hover:bg-green-800 cursor-pointer text-white font-medium shadow">
-        Submit Invoice
+    <div class="flex gap-4">
+      <button
+        type="submit"
+        :disabled="isSubmitting"
+        class="px-6 py-2 bg-green-700 hover:bg-green-800 disabled:bg-green-400 cursor-pointer text-white font-medium shadow"
+      >
+        {{ isSubmitting ? 'Submitting...' : 'Submit Invoice' }}
       </button>
+      <div v-if="lastCreatedInvoiceId" class="flex items-center gap-2">
+        <button
+          type="button"
+          @click="downloadPdf(lastCreatedInvoiceId)"
+          :disabled="isDownloading"
+          class="px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 cursor-pointer text-white font-medium shadow"
+        >
+          {{ isDownloading ? 'Downloading...' : 'Download PDF' }}
+        </button>
+        <span class="text-sm text-gray-600">Invoice ID: {{ lastCreatedInvoiceId }}</span>
+      </div>
     </div>
   </form>
 
@@ -127,44 +157,162 @@
 </template>
 
 <script setup>
-import { reactive } from "vue";
+import { reactive, toRaw, onMounted, onUnmounted, ref } from "vue";
 import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
+import invoiceService from "../services/invoiceService.js";
+import SignaturePad from "signature_pad";
+
+const signatureCanvas = ref(null);
+const logoFileInput = ref(null);
+const lastCreatedInvoiceId = ref(null);
+const isDownloading = ref(false);
+const isSubmitting = ref(false);
+let signaturePad = null;
+let handleResize = null;
+
+onMounted(() => {
+  if (signatureCanvas.value) {
+    const canvas = signatureCanvas.value;
+    const rect = canvas.getBoundingClientRect();
+
+    canvas.width = rect.width;
+    canvas.height = rect.height;
+
+    signaturePad = new SignaturePad(canvas);
+    signaturePad.addEventListener('endStroke', () => {
+      if (!signaturePad.isEmpty()) {
+        form.signature_image_path = signaturePad.toDataURL();
+      }
+    });
+  }
+});
+
+onUnmounted(() => {
+  if (handleResize) {
+    window.removeEventListener('resize', handleResize);
+  }
+});
+
+const clearSignature = () => {
+  if (signaturePad && typeof signaturePad.clear === 'function') {
+    signaturePad.clear();
+    form.signature_image_path = '';
+  }
+};
+
+const saveSignature = () => {
+  if (signaturePad && typeof signaturePad.isEmpty === 'function' && !signaturePad.isEmpty()) {
+    form.signature_image_path = signaturePad.toDataURL();
+    console.log('Signature saved:', form.signature_image_path.substring(0, 50) + '...');
+    alert('Signature saved successfully!');
+  } else {
+    alert('Please draw a signature first!');
+  }
+};
+
+const handleLogoUpload = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
+    const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+
+    if (!allowedTypes.includes(file.type) || !allowedExtensions.includes(fileExtension)) {
+      alert('Please select a valid image file (JPEG, PNG, or GIF). WebP files are not supported.');
+      e.target.value = '';
+      return;
+    }
+
+    form.logo_image_file = file;
+    form.logo_preview = URL.createObjectURL(file);
+  }
+};
+
+const clearLogo = () => {
+  if (form.logo_preview) {
+    URL.revokeObjectURL(form.logo_preview);
+  }
+  form.logo_image_file = null;
+  form.logo_preview = '';
+  if (logoFileInput.value) {
+    logoFileInput.value.value = '';
+  }
+};
 
 const form = reactive({
-  invoice_number: "INV/001/08/2025",
-  process_date: "2025-08-07",
-  due_date: "2025-08-14",
-  customer_name: "Mas Devan",
-  customer_id: "CUST-001",
-  customer_address: "Jl. Developer No. 42, Jakarta",
-  previous_balance: 150000.0,
-  contact_person: "Rizky Dev",
-  contact_phone: "081234567890",
-  payment_account: "BCA 1234567890 a.n. Mas Devan",
-  contact_email: "masdevan@example.com",
-  notes: "Harap dibayar sebelum due date.",
-  signature_image_path: "uploads/signatures/devan.png",
-  logo_image_path: "uploads/logos/company.png",
+  invoice_number: '',
+  process_date: '',
+  due_date: '',
+  customer_name: '',
+  customer_id: '',
+  customer_address: '',
+  previous_balance: 0,
+  contact_person: '',
+  contact_phone: '',
+  payment_account: '',
+  contact_email: '',
+  notes: '',
+  signature_image_path: '',
+  logo_image_path: '',
+  logo_image_file: null,
+  logo_preview: '',
   items: [
     {
-      name: "Jasa Desain UI/UX",
-      description: "Redesign homepage & dashboard",
+      name: '',
+      description: '',
       qty: 1,
-      price: 2000000,
-      subtotal: 2000000,
-      amount: 200000,
-    },
-    {
-      name: "Hosting 1 Tahun",
-      description: "Shared Hosting Premium",
-      qty: 1,
-      price: 500000,
-      subtotal: 500000,
-      amount: 500000,
+      price: 0,
+      subtotal: 0,
+      amount: 0,
     },
   ],
-});
+})
+
+const resetForm = () => {
+  if (form.logo_preview) {
+    URL.revokeObjectURL(form.logo_preview);
+  }
+
+  Object.assign(form, {
+    invoice_number: '',
+    process_date: '',
+    due_date: '',
+    customer_name: '',
+    customer_id: '',
+    customer_address: '',
+    previous_balance: 0,
+    contact_person: '',
+    contact_phone: '',
+    payment_account: '',
+    contact_email: '',
+    notes: '',
+    signature_image_path: '',
+    logo_image_path: '',
+    logo_image_file: null,
+    logo_preview: '',
+    items: [
+      {
+        name: '',
+        description: '',
+        qty: 1,
+        price: 0,
+        subtotal: 0,
+        amount: 0,
+      },
+    ],
+  })
+
+  if (signaturePad && typeof signaturePad.clear === 'function') {
+    signaturePad.clear();
+  }
+
+  if (logoFileInput.value) {
+    logoFileInput.value.value = '';
+  }
+
+  lastCreatedInvoiceId.value = null;
+}
 
 const addItem = () => {
   form.items.push({
@@ -181,7 +329,132 @@ const removeItem = (index) => {
   form.items.splice(index, 1);
 };
 
-const submitForm = () => {
-  console.log(JSON.stringify(form, null, 2));
+const downloadPdf = async (invoiceId) => {
+  isDownloading.value = true;
+  const response = await invoiceService.downloadPdf(invoiceId);
+  const blob = response.data;
+
+  if (!blob || blob.size === 0) {
+    alert('Empty PDF response from server');
+    isDownloading.value = false;
+    return;
+  }
+
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `invoice-${invoiceId}.pdf`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
+
+  alert(`PDF downloaded successfully!\nFilename: invoice-${invoiceId}.pdf`);
+  const pdfUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/invoices/${invoiceId}/pdf`;
+  window.open(pdfUrl, '_blank');
+  isDownloading.value = false;
+};
+
+const submitForm = async () => {
+  if (!form.invoice_number.trim()) {
+    alert('Invoice Number is required!');
+    return;
+  }
+
+  if (!form.customer_name.trim()) {
+    alert('Customer Name is required!');
+    return;
+  }
+
+  if (!form.process_date) {
+    alert('Process Date is required!');
+    return;
+  }
+
+  if (!form.due_date) {
+    alert('Due Date is required!');
+    return;
+  }
+
+  if (form.process_date && form.due_date) {
+    const processDate = new Date(form.process_date);
+    const dueDate = new Date(form.due_date);
+    if (dueDate < processDate) {
+      alert('Due Date must be the same as or after the Process Date!');
+      return;
+    }
+  }
+
+  if (form.contact_email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.contact_email)) {
+    alert('Please enter a valid email address!');
+    return;
+  }
+
+  const validItems = form.items.filter(item =>
+    item.name.trim() && item.qty > 0 && item.price > 0
+  );
+
+  if (validItems.length === 0) {
+    alert('At least one item with name, quantity, and price is required!');
+    return;
+  }
+
+  if (!form.signature_image_path) {
+    if (signaturePad && typeof signaturePad.isEmpty === 'function' && !signaturePad.isEmpty()) {
+      form.signature_image_path = signaturePad.toDataURL();
+    } else {
+      const confirmSignature = confirm(
+        'No signature detected. Do you want to continue without signature?'
+      );
+      if (!confirmSignature) {
+        return;
+      }
+    }
+  }
+
+  isSubmitting.value = true;
+  const formData = new FormData();
+
+  formData.append('invoice_number', form.invoice_number);
+  formData.append('process_date', form.process_date);
+  formData.append('due_date', form.due_date);
+  formData.append('customer_name', form.customer_name);
+  formData.append('customer_id', form.customer_id);
+  formData.append('customer_address', form.customer_address);
+  formData.append('previous_balance', form.previous_balance);
+  formData.append('contact_person', form.contact_person);
+  formData.append('contact_phone', form.contact_phone);
+  formData.append('payment_account', form.payment_account);
+  formData.append('contact_email', form.contact_email);
+  formData.append('notes', form.notes);
+
+  if (form.signature_image_path) {
+    formData.append('signature_image_path', form.signature_image_path);
+  }
+
+  if (form.logo_image_file) {
+    formData.append('logo', form.logo_image_file);
+  }
+
+  validItems.forEach((item, index) => {
+    formData.append(`items[${index}][name]`, item.name);
+    formData.append(`items[${index}][description]`, item.description);
+    formData.append(`items[${index}][qty]`, item.qty);
+    formData.append(`items[${index}][price]`, item.price);
+    formData.append(`items[${index}][subtotal]`, item.subtotal);
+    formData.append(`items[${index}][amount]`, item.amount);
+  });
+
+  const res = await invoiceService.create(formData);
+  alert("Invoice Successfully Created!");
+
+  if (res.data && res.data.id) {
+    lastCreatedInvoiceId.value = res.data.id;
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    await downloadPdf(res.data.id);
+  }
+
+  resetForm();
+  isSubmitting.value = false;
 };
 </script>
