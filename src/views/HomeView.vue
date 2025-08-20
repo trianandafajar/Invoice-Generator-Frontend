@@ -162,6 +162,7 @@ import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
 import invoiceService from "../services/invoiceService.js";
 import SignaturePad from "signature_pad";
+import { generateInvoicePdf } from "../utils/pdf/generateInvoicePdf"; 
 
 const signatureCanvas = ref(null);
 const logoFileInput = ref(null);
@@ -310,8 +311,6 @@ const resetForm = () => {
   if (logoFileInput.value) {
     logoFileInput.value.value = '';
   }
-
-  lastCreatedInvoiceId.value = null;
 }
 
 const addItem = () => {
@@ -330,30 +329,29 @@ const removeItem = (index) => {
 };
 
 const downloadPdf = async (invoiceId) => {
-  isDownloading.value = true;
-  const response = await invoiceService.downloadPdf(invoiceId);
-  const blob = response.data;
+  try {
+    isDownloading.value = true;
 
-  if (!blob || blob.size === 0) {
-    alert('Empty PDF response from server');
+    const response = await invoiceService.downloadPdf(invoiceId);
+
+    const invoice = response.data?.data?.invoice;
+
+    if (!invoice) {
+      alert("Invoice data not found from server");
+      return;
+    }
+
+    invoice.items = Array.isArray(invoice.items) ? invoice.items : [];
+
+    generateInvoicePdf(invoice);
+  } catch (error) {
+    console.error("Error downloading PDF:", error);
+    alert("Failed to download invoice. Please try again later.");
+  } finally {
     isDownloading.value = false;
-    return;
   }
-
-  const url = window.URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = `invoice-${invoiceId}.pdf`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  window.URL.revokeObjectURL(url);
-
-  alert(`PDF downloaded successfully!\nFilename: invoice-${invoiceId}.pdf`);
-  const pdfUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/invoices/${invoiceId}/pdf`;
-  window.open(pdfUrl, '_blank');
-  isDownloading.value = false;
 };
+
 
 const submitForm = async () => {
   if (!form.invoice_number.trim()) {
@@ -412,49 +410,71 @@ const submitForm = async () => {
     }
   }
 
-  isSubmitting.value = true;
-  const formData = new FormData();
+  try {
+    isSubmitting.value = true;
+    const formData = new FormData();
 
-  formData.append('invoice_number', form.invoice_number);
-  formData.append('process_date', form.process_date);
-  formData.append('due_date', form.due_date);
-  formData.append('customer_name', form.customer_name);
-  formData.append('customer_id', form.customer_id);
-  formData.append('customer_address', form.customer_address);
-  formData.append('previous_balance', form.previous_balance);
-  formData.append('contact_person', form.contact_person);
-  formData.append('contact_phone', form.contact_phone);
-  formData.append('payment_account', form.payment_account);
-  formData.append('contact_email', form.contact_email);
-  formData.append('notes', form.notes);
+    formData.append('invoice_number', form.invoice_number);
+    formData.append('process_date', form.process_date);
+    formData.append('due_date', form.due_date);
+    formData.append('customer_name', form.customer_name);
+    formData.append('customer_id', form.customer_id);
+    formData.append('customer_address', form.customer_address);
+    formData.append('previous_balance', form.previous_balance);
+    formData.append('contact_person', form.contact_person);
+    formData.append('contact_phone', form.contact_phone);
+    formData.append('payment_account', form.payment_account);
+    formData.append('contact_email', form.contact_email);
+    formData.append('notes', form.notes);
 
-  if (form.signature_image_path) {
-    formData.append('signature_image_path', form.signature_image_path);
+    if (form.signature_image_path) {
+      formData.append('signature_image_path', form.signature_image_path);
+    }
+
+    if (form.logo_image_file) {
+      formData.append('logo', form.logo_image_file);
+    }
+
+    validItems.forEach((item, index) => {
+      formData.append(`items[${index}][name]`, item.name);
+      formData.append(`items[${index}][description]`, item.description);
+      formData.append(`items[${index}][qty]`, item.qty);
+      formData.append(`items[${index}][price]`, item.price);
+      formData.append(`items[${index}][subtotal]`, item.subtotal);
+      formData.append(`items[${index}][amount]`, item.amount);
+    });
+
+    const res = await invoiceService.create(formData);
+    alert("Invoice Successfully Created!");  
+
+    if (res.data.data.id) {
+      lastCreatedInvoiceId.value = res.data?.id;
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      await downloadPdf(res.data?.data.id);
+    }
+
+    resetForm();
+  } catch (error) {
+    if (error.response) {
+      // kalau Laravel validation error
+      if (error.response.status === 422) {
+        const errors = error.response.data.errors;
+        if (errors) {
+          const messages = Object.values(errors).flat().join("\n");
+          alert(`Validation Error:\n${messages}`);
+        } else {
+          alert("Validation failed, but no details provided.");
+        }
+      } else {
+        console.error("API Error:", error.response);
+        alert(`Error ${error.response.status}: ${error.response.statusText}`);
+      }
+    } else {
+      console.error("Unexpected Error:", error);
+      alert("Something went wrong, please try again.");
+    }
+  } finally {
+    isSubmitting.value = false;
   }
-
-  if (form.logo_image_file) {
-    formData.append('logo', form.logo_image_file);
-  }
-
-  validItems.forEach((item, index) => {
-    formData.append(`items[${index}][name]`, item.name);
-    formData.append(`items[${index}][description]`, item.description);
-    formData.append(`items[${index}][qty]`, item.qty);
-    formData.append(`items[${index}][price]`, item.price);
-    formData.append(`items[${index}][subtotal]`, item.subtotal);
-    formData.append(`items[${index}][amount]`, item.amount);
-  });
-
-  const res = await invoiceService.create(formData);
-  alert("Invoice Successfully Created!");
-
-  if (res.data && res.data.id) {
-    lastCreatedInvoiceId.value = res.data.id;
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    await downloadPdf(res.data.id);
-  }
-
-  resetForm();
-  isSubmitting.value = false;
 };
 </script>

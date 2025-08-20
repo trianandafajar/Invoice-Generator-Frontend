@@ -20,6 +20,8 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.1.11",
     "axios": "^1.11.0",
+    "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.2",
     "pinia": "^3.0.3",
     "signature_pad": "^5.0.10",
     "tailwindcss": "^4.1.11",

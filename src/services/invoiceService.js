@@ -23,9 +23,8 @@ export default {
   },
   downloadPdf(id) {
     return api.get(`${API_BASE}/${id}/pdf`, {
-      responseType: 'blob',
       headers: {
-        'Accept': 'application/pdf',
+        'Accept': 'application/json',
       }
     })
   },
