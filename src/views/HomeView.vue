@@ -428,7 +428,7 @@ const submitForm = async () => {
     formData.append('notes', form.notes);
 
     if (form.signature_image_path) {
-      formData.append('signature_image_path', form.signature_image_path);
+      formData.append('signature', form.signature_image_path);
     }
 
     if (form.logo_image_file) {

@@ -1,26 +1,20 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-/**
- * Generate Invoice PDF dengan optional logo (base64)
- */
 export async function generateInvoicePdf(invoice) {
   const doc = new jsPDF();
 
-  // ====== LOGO (pakai base64 langsung) ======
   if (invoice.logo_base64) {
     try {
-      doc.addImage(invoice.logo_base64, "PNG", 14, 10, 30, 30); // format bisa "PNG" atau "JPEG" sesuai aslinya
+      doc.addImage(invoice.logo_base64, "PNG", 14, 10, 30, 30); 
     } catch (e) {
       console.error("Gagal render logo base64:", e);
     }
   }
 
-  // ====== HEADER TITLE ======
   doc.setFontSize(14);
-  doc.text("INVOICE", 120, 20); // geser ke kanan biar ga tabrakan logo
+  doc.text("INVOICE", 120, 20);
 
-  // ====== INVOICE INFO ======
   doc.setFontSize(10);
   doc.text(`Billing Number / Invoice Number: ${invoice.invoice_number}`, 120, 30);
   doc.text(`Customer Name : ${invoice.customer_name}`, 120, 36);
@@ -28,12 +22,10 @@ export async function generateInvoicePdf(invoice) {
   doc.text(`Process Date  : ${formatDate(invoice.process_date)}`, 120, 48);
   doc.text(`Due Date      : ${formatDate(invoice.due_date)}`, 120, 54);
 
-  // ====== CUSTOMER INFO ======
   doc.text(`Dear / To:`, 14, 50);
   doc.text(`${invoice.customer_name}`, 14, 56);
   doc.text(`${invoice.customer_address}`, 14, 62);
 
-  // ====== TABLE (ITEMS) ======
   doc.setFontSize(12);
   doc.text("Billing Summary / Invoice Summary", 14, 80);
 
@@ -50,7 +42,6 @@ export async function generateInvoicePdf(invoice) {
     columnStyles: { 0: { halign: "left" } },
   });
 
-  // ====== TOTALS ======
   const totalY = doc.lastAutoTable.finalY + 10;
   doc.setFontSize(11);
   doc.text("Total Current Balance", 14, totalY);
@@ -60,20 +51,26 @@ export async function generateInvoicePdf(invoice) {
   const totalAmount = invoice.items.reduce((sum, i) => sum + parseFloat(i.amount), 0);
   doc.text(formatCurrency(totalAmount), 180, totalY + 8, { align: "right" });
 
-  // ====== FOOTER ======
-  const footerY = totalY + 30;
+  if (invoice.signature) {
+    const sigY = totalY + 25;
+    doc.setFontSize(10);
+    doc.text("Authorized Signature:", 14, sigY);
+    try {
+      doc.addImage(invoice.signature, "PNG", 14, sigY + 5, 40, 20); 
+    } catch (e) {
+      console.error("Gagal render signature base64:", e);
+    }
+  }
+
+  const footerY = totalY + 60;
   doc.setFontSize(9);
   doc.text("If you have any question about this invoice, please contact :", 14, footerY);
   doc.text(`Telp / SMS / WA: ${invoice.contact_phone}`, 14, footerY + 6);
   doc.text(`Payment Account: ${invoice.payment_account}`, 14, footerY + 12);
 
-  // ====== SAVE PDF ======
   doc.save(`invoice-${invoice.id}.pdf`);
 }
 
-/**
- * Format mata uang IDR
- */
 function formatCurrency(val) {
   return new Intl.NumberFormat("id-ID", {
     style: "currency",
@@ -81,9 +78,6 @@ function formatCurrency(val) {
   }).format(val);
 }
 
-/**
- * Format tanggal ID
- */
 function formatDate(date) {
   return new Date(date).toLocaleDateString("id-ID", {
     day: "2-digit",
