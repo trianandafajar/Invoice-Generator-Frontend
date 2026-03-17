@@ -16,8 +16,8 @@
               </div>
 
               <div class="flex flex-wrap gap-3">
-                <span class="status-pill">{{ form.items.length }} item{{ form.items.length > 1 ? 's' : '' }}</span>
-                <span v-if="lastCreatedInvoiceId" class="status-pill status-pill-success">
+                <span class="status-pill app-card">{{ form.items.length }} item{{ form.items.length > 1 ? 's' : '' }}</span>
+                <span v-if="lastCreatedInvoiceId" class="status-pill status-pill-success app-card">
                   Last invoice ID: {{ lastCreatedInvoiceId }}
                 </span>
               </div>
@@ -157,7 +157,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
-                  <div class="!rounded-lg border border-slate-200 bg-slate-50/80 p-5">
+                  <div class="app-card !rounded-lg border border-slate-200 bg-slate-50/80 p-5">
                     <label class="form-label">Signature</label>
                     <canvas
                       ref="signatureCanvas"
@@ -178,7 +178,7 @@
                     </div>
                   </div>
 
-                  <div class="!rounded-lg border border-slate-200 bg-slate-50/80 p-5">
+                  <div class="app-card !rounded-lg border border-slate-200 bg-slate-50/80 p-5">
                     <label class="form-label">Logo</label>
                     <input
                       ref="logoFileInput"
@@ -282,11 +282,10 @@
                       {{ isSubmitting ? 'Submitting...' : 'Submit Invoice' }}
                     </button>
                     <button
-                      v-if="lastCreatedInvoiceId"
                       type="button"
                       @click="downloadPdf(lastCreatedInvoiceId)"
                       :disabled="isDownloading"
-                      class="app-button app-button-secondary app-button-lg justify-center border-white/10 bg-white/10 text-white hover:bg-white/14 disabled:cursor-not-allowed disabled:opacity-60"
+                      class="app-button app-button-secondary app-button-lg justify-center !border-red-500/80 !bg-red-500/80 !text-white hover:!bg-red-500/60 hover:!border-red-500/50 disabled:cursor-not-allowed disabled:opacity-60 !rounded-lg"
                     >
                       {{ isDownloading ? 'Downloading...' : 'Download PDF' }}
                     </button>
@@ -303,7 +302,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { reactive, onMounted, onUnmounted, ref } from 'vue'
 import Footer from '../components/Footer.vue'
 import Header from '../components/Header.vue'
@@ -326,7 +325,7 @@ const form = reactive({
   customer_name: '',
   customer_id: '',
   customer_address: '',
-  previous_balance: 0,
+  previous_balance: '',
   contact_person: '',
   contact_phone: '',
   payment_account: '',
@@ -605,7 +604,7 @@ const submitForm = async () => {
       formData.append('logo', form.logo_image_file)
     }
 
-    validItems.forEach((item, index) => {
+    validItems.forEach((item: any, index) => {
       formData.append(`items[${index}][name]`, item.name)
       formData.append(`items[${index}][description]`, item.description)
       formData.append(`items[${index}][qty]`, item.qty)

@@ -24,9 +24,13 @@ body {
 }
 
 .app-surface {
-  @apply rounded-[32px] border shadow-[0_20px_60px_rgba(15,23,42,0.08)] backdrop-blur-sm;
+  @apply rounded-[32px] border shadow-[0_20px_60px_rgba(15,23,42,0.08)] backdrop-blur-sm transition duration-200;
   background: var(--app-surface);
   border-color: var(--app-border);
+}
+
+.app-card {
+  @apply transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_50px_rgba(15,23,42,0.12)];
 }
 
 .section-kicker {
@@ -42,7 +46,7 @@ body {
 }
 
 .app-button {
-  @apply inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition duration-200;
+  @apply inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition duration-200 hover:scale-[99%];
 }
 
 .app-button-lg {

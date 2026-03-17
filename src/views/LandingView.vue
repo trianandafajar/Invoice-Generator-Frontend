@@ -30,7 +30,7 @@
             </div>
 
             <div class="mt-10 grid gap-4 sm:grid-cols-3">
-              <div v-for="stat in stats" :key="stat.label" class="app-surface p-5 !rounded-b-lg !rounded-tl-lg shadow">
+              <div v-for="stat in stats" :key="stat.label" class="app-surface app-card p-5 !rounded-b-lg !rounded-tl-lg shadow">
                 <p class="text-3xl font-semibold text-slate-950">{{ stat.value }}</p>
                 <p class="mt-2 text-sm text-slate-600">{{ stat.label }}</p>
               </div>
@@ -54,7 +54,7 @@
               </div>
 
               <div class="mt-8 grid gap-4">
-                <div class="!rounded-lg border border-white/10 bg-white/5 p-5">
+                <div class="app-card !rounded-lg border border-white/10 bg-white/5 p-5">
                   <div class="flex items-start justify-between gap-4">
                     <div>
                       <p class="text-sm text-white/60">Invoice Number</p>
@@ -78,13 +78,13 @@
                   </div>
                 </div>
 
-                <div class="rounded-lg border border-white/10 bg-white/5 p-5">
+                <div class="app-card rounded-lg border border-white/10 bg-white/5 p-5">
                   <div class="mb-4 flex items-center justify-between">
                     <p class="text-sm font-medium text-white/85">Invoice items</p>
                     <p class="text-sm text-white/45">Auto totals</p>
                   </div>
                   <div class="space-y-3 text-sm">
-                    <div v-for="item in previewItems" :key="item.name" class="flex items-center justify-between rounded-lg bg-white/5 px-4 py-3">
+                    <div v-for="item in previewItems" :key="item.name" class="app-card flex items-center justify-between rounded-lg bg-white/5 px-4 py-3">
                       <div>
                         <p class="font-medium text-white">{{ item.name }}</p>
                         <p class="text-white/45">{{ item.meta }}</p>
@@ -95,11 +95,11 @@
                 </div>
 
                 <div class="grid gap-4 sm:grid-cols-2">
-                  <div class="rounded-xl border border-white/10 bg-white/5 p-5">
+                  <div class="app-card rounded-xl border border-white/10 bg-white/5 p-5">
                     <p class="text-sm text-white/45">Brand assets</p>
                     <p class="mt-2 text-lg font-semibold">Logo and signature upload included</p>
                   </div>
-                  <div class="rounded-xl border border-white/10 bg-gradient-to-br from-emerald-400/15 to-cyan-400/10 p-5">
+                  <div class="app-card rounded-xl border border-white/10 bg-gradient-to-br from-emerald-400/15 to-cyan-400/10 p-5">
                     <p class="text-sm text-white/45">Output</p>
                     <p class="mt-2 text-lg font-semibold">Download polished PDF instantly</p>
                   </div>
@@ -121,7 +121,7 @@
           </div>
 
           <div class="mt-10 grid gap-6 lg:grid-cols-3">
-            <article v-for="feature in features" :key="feature.title" class="app-surface p-7">
+            <article v-for="feature in features" :key="feature.title" class="app-surface app-card p-7">
               <div class="feature-icon" v-html="feature.icon"></div>
               <h3 class="mt-5 text-xl font-semibold text-slate-950">{{ feature.title }}</h3>
               <p class="mt-3 text-sm leading-7 text-slate-600">{{ feature.description }}</p>
@@ -154,7 +154,7 @@
             <p class="section-kicker">How it works</p>
             <h2 class="section-title">Three steps from blank form to finished PDF.</h2>
             <div class="mt-8 space-y-4">
-              <div v-for="(step, index) in steps" :key="step.title" class="!rounded-lg border border-slate-200 bg-slate-50/80 p-5">
+              <div v-for="(step, index) in steps" :key="step.title" class="app-card !rounded-lg border border-slate-200 bg-slate-50/80 p-5">
                 <div class="flex items-center gap-4">
                   <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-slate-950 text-sm font-semibold text-white">
                     0{{ index + 1 }}
@@ -178,7 +178,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import Footer from '../components/Footer.vue'
 import Header from '../components/Header.vue'
 import LogoMark from '../components/LogoMark.vue'

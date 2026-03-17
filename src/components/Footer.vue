@@ -30,7 +30,7 @@
   </footer>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import LogoMark from './LogoMark.vue'
 </script>
