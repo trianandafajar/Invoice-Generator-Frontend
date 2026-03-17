@@ -282,6 +282,7 @@
                       {{ isSubmitting ? 'Submitting...' : 'Submit Invoice' }}
                     </button>
                     <button
+                      v-if="lastCreatedInvoiceId"
                       type="button"
                       @click="downloadPdf(lastCreatedInvoiceId)"
                       :disabled="isDownloading"
