@@ -1,34 +1,47 @@
 <template>
-<header class="w-full border-b border-green-500">
-  <!-- Bagian atas: logo + menu utama -->
-  <div class="bg-green-500">
-    <div class="max-w-[1024px] mx-auto flex items-center justify-between px-6 md:px-0 py-3">
-      <!-- Logo -->
-      <div class="flex items-center space-x-3">
-        <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-green-500 font-bold text-lg">
-          IG
+  <header :class="headerClass">
+    <div class="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-6 lg:px-8">
+      <RouterLink to="/" class="flex items-center gap-3 text-slate-900">
+        <LogoMark size="sm" />
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.28em] text-emerald-600">Invoice Generator</p>
+          <p class="text-sm font-medium text-slate-600">Create polished invoices in minutes</p>
         </div>
-        <span class="text-xl font-semibold text-white">
-          Invoice Generator
-        </span>
-      </div>
+      </RouterLink>
 
-      <!-- Menu kanan -->
-      <nav class="flex space-x-6 text-white font-medium">
-        <a href="#" class="hover:text-green-700 transition">Home</a>
-        <a href="#" class="hover:text-green-700 transition">About</a>
-        <a href="#" class="hover:text-green-700 transition">Support</a>
+      <nav class="hidden items-center gap-6 text-sm font-medium text-slate-600 md:flex">
+        <RouterLink to="/" class="transition hover:text-slate-900">Home</RouterLink>
+        <a href="/#features" class="transition hover:text-slate-900">Features</a>
+        <RouterLink to="/generator" class="transition hover:text-slate-900">Open Generator</RouterLink>
       </nav>
-    </div>
-  </div>
 
-  <!-- Navigasi kedua: full hijau -->
-  <!-- <div class="bg-green-500">
-    <div class="max-w-[1024px] mx-auto flex space-x-6 px-6 md:px-0 py-2 text-white font-medium">
-      <a href="#" class="hover:text-green-100 transition">Create Invoice</a>
-      <a href="#" class="hover:text-green-100 transition">Templates</a>
-      <a href="#" class="hover:text-green-100 transition">History</a>
+      <RouterLink to="/generator" class="app-button app-button-primary hidden md:inline-flex !rounded-lg">
+        Create Invoice
+      </RouterLink>
     </div>
-  </div> -->
-</header>
+  </header>
 </template>
+
+<script setup>
+import { computed } from 'vue'
+import { RouterLink } from 'vue-router'
+import LogoMark from './LogoMark.vue'
+
+const props = defineProps({
+  showFeaturesLink: {
+    type: Boolean,
+    default: false,
+  },
+  solid: {
+    type: Boolean,
+    default: false,
+  },
+})
+
+const headerClass = computed(() =>
+  [
+    'sticky top-0 z-40 border-b border-white/60 backdrop-blur-xl',
+    props.solid ? 'bg-white/90 shadow-[0_10px_30px_rgba(15,23,42,0.06)]' : 'bg-transparent',
+  ].join(' '),
+)
+</script>
