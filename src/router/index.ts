@@ -1,21 +1,47 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import LandingView from '../views/LandingView.vue'
-import GeneratorView from '../views/GeneratorView.vue'
+import type { RouterHistory, RouteRecordRaw } from 'vue-router'
+import { createRouter } from 'vue-router'
 
-const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: LandingView,
+export const routes: RouteRecordRaw[] = [
+  {
+    path: '/',
+    name: 'home',
+    component: () => import('../views/LandingView.vue'),
+    meta: {
+      title: 'Create polished invoices in minutes',
+      description: 'Build branded invoices, capture signatures, and export client-ready PDFs from one fast workflow.',
+      canonicalPath: '/',
+      robots: 'index,follow',
+      ogType: 'website',
     },
-    {
-      path: '/generator',
-      name: 'generator',
-      component: GeneratorView,
+  },
+  {
+    path: '/generator',
+    name: 'generator',
+    component: () => import('../views/GeneratorView.vue'),
+    meta: {
+      title: 'Invoice generator workspace',
+      description: 'Create and export invoices with structured sections, inline validation, and accessible feedback.',
+      canonicalPath: '/generator',
+      robots: 'noindex,follow',
+      ogType: 'website',
     },
-  ],
-})
+  },
+]
 
-export default router
+export function createAppRouter(history: RouterHistory) {
+  return createRouter({
+    history,
+    routes,
+    scrollBehavior(to) {
+      if (to.hash) {
+        return {
+          el: to.hash,
+          behavior: 'smooth',
+          top: 96,
+        }
+      }
+
+      return { top: 0 }
+    },
+  })
+}

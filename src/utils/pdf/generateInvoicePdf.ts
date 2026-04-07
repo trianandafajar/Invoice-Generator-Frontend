@@ -1,6 +1,3 @@
-import jsPDF from "jspdf"
-import autoTable from "jspdf-autotable"
-
 export interface InvoiceItem {
   description: string
   amount: number | string
@@ -18,24 +15,28 @@ export interface Invoice {
   contact_phone: string
   payment_account: string
   items: InvoiceItem[]
-
   logo_base64?: string | null
   signature?: string | null
 }
 
 export async function generateInvoicePdf(invoice: Invoice): Promise<void> {
+  const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+    import('jspdf'),
+    import('jspdf-autotable'),
+  ])
+
   const doc = new jsPDF()
 
   if (invoice.logo_base64) {
     try {
-      doc.addImage(invoice.logo_base64, "PNG", 14, 10, 30, 30)
-    } catch (e) {
-      console.error("Gagal render logo base64:", e)
+      doc.addImage(invoice.logo_base64, 'PNG', 14, 10, 30, 30)
+    } catch (error) {
+      console.error('Failed to render logo image:', error)
     }
   }
 
   doc.setFontSize(14)
-  doc.text("INVOICE", 120, 20)
+  doc.text('INVOICE', 120, 20)
 
   doc.setFontSize(10)
   doc.text(`Billing Number / Invoice Number: ${invoice.invoice_number}`, 120, 30)
@@ -44,93 +45,70 @@ export async function generateInvoicePdf(invoice: Invoice): Promise<void> {
   doc.text(`Process Date  : ${formatDate(invoice.process_date)}`, 120, 48)
   doc.text(`Due Date      : ${formatDate(invoice.due_date)}`, 120, 54)
 
-  doc.text(`Dear / To:`, 14, 50)
+  doc.text('Dear / To:', 14, 50)
   doc.text(invoice.customer_name, 14, 56)
   doc.text(invoice.customer_address, 14, 62)
 
   doc.setFontSize(12)
-  doc.text("Billing Summary / Invoice Summary", 14, 80)
+  doc.text('Billing Summary / Invoice Summary', 14, 80)
 
   autoTable(doc, {
     startY: 85,
-    head: [["Description", "Amount"]],
+    head: [['Description', 'Amount']],
     body: invoice.items.map((item) => [
       item.description,
       formatCurrency(item.amount),
     ]),
-    theme: "grid",
+    theme: 'grid',
     headStyles: { fillColor: [0, 0, 0], textColor: 255 },
-    styles: { halign: "right" },
-    columnStyles: { 0: { halign: "left" } },
+    styles: { halign: 'right' },
+    columnStyles: { 0: { halign: 'left' } },
   })
 
-  const totalY = (doc as any).lastAutoTable.finalY + 10
+  const totalY = (doc as typeof doc & { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10
 
   doc.setFontSize(11)
+  doc.text('Total Current Balance', 14, totalY)
+  doc.text(formatCurrency(invoice.previous_balance), 180, totalY, { align: 'right' })
 
-  doc.text("Total Current Balance", 14, totalY)
-  doc.text(
-    formatCurrency(invoice.previous_balance),
-    180,
-    totalY,
-    { align: "right" }
-  )
+  doc.text('Total Amount Due', 14, totalY + 8)
 
-  doc.text("Total Amount Due", 14, totalY + 8)
+  const totalAmount = invoice.items.reduce((sum, item) => sum + Number(item.amount), 0)
+  doc.text(formatCurrency(totalAmount), 180, totalY + 8, { align: 'right' })
 
-  const totalAmount = invoice.items.reduce(
-    (sum, i) => sum + Number(i.amount),
-    0
-  )
-
-  doc.text(
-    formatCurrency(totalAmount),
-    180,
-    totalY + 8,
-    { align: "right" }
-  )
-
-  // Signature
   if (invoice.signature) {
     const sigY = totalY + 25
 
     doc.setFontSize(10)
-    doc.text("Authorized Signature:", 14, sigY)
+    doc.text('Authorized Signature:', 14, sigY)
 
     try {
-      doc.addImage(invoice.signature, "PNG", 14, sigY + 5, 40, 20)
-    } catch (e) {
-      console.error("Gagal render signature base64:", e)
+      doc.addImage(invoice.signature, 'PNG', 14, sigY + 5, 40, 20)
+    } catch (error) {
+      console.error('Failed to render signature image:', error)
     }
   }
 
-  // Footer
   const footerY = totalY + 60
 
   doc.setFontSize(9)
-  doc.text(
-    "If you have any question about this invoice, please contact :",
-    14,
-    footerY
-  )
+  doc.text('If you have any question about this invoice, please contact :', 14, footerY)
   doc.text(`Telp / SMS / WA: ${invoice.contact_phone}`, 14, footerY + 6)
   doc.text(`Payment Account: ${invoice.payment_account}`, 14, footerY + 12)
-
-  // Save file
   doc.save(`invoice-${invoice.id}.pdf`)
 }
 
-function formatCurrency(val: number | string): string {
-  return new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-  }).format(Number(val))
+function formatCurrency(value: number | string): string {
+  return new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+  }).format(Number(value))
 }
 
 function formatDate(date: string | Date): string {
-  return new Date(date).toLocaleDateString("id-ID", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
+  return new Date(date).toLocaleDateString('id-ID', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
   })
 }

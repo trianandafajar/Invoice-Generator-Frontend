@@ -1,14 +1,15 @@
 import './assets/index.css'
 
-import { createApp } from 'vue'
-import { createPinia } from 'pinia'
+import { createInvoiceApp } from './app'
+import { applyHead } from './utils/seo/head'
 
-import App from './App.vue'
-import router from './router'
+const { app, router } = createInvoiceApp()
 
-const app = createApp(App)
+router.afterEach((to) => {
+  applyHead(to)
+})
 
-app.use(createPinia())
-app.use(router)
-
-app.mount('#app')
+router.isReady().then(() => {
+  applyHead(router.currentRoute.value)
+  app.mount('#app')
+})
