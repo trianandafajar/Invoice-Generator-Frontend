@@ -13,7 +13,7 @@
     </template>
 
     <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
-      <div class="app-card !rounded-lg border border-slate-200 bg-slate-50/80 p-5">
+      <div class="app-card border border-zinc-300 bg-white p-5">
         <FormField
           id="signature-pad"
           label="Signature"
@@ -24,7 +24,7 @@
             <canvas
               id="signature-pad"
               ref="signatureCanvas"
-              class="h-44 w-full cursor-crosshair rounded-2xl border border-dashed border-slate-300 bg-white shadow-inner touch-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
+              class="h-44 w-full cursor-crosshair rounded-none border border-dashed border-zinc-400 bg-white shadow-inner touch-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
               :aria-invalid="invalid"
               :aria-describedby="describedBy || undefined"
               tabindex="0"
@@ -34,21 +34,21 @@
         </FormField>
 
         <div class="mt-4 flex flex-wrap gap-3">
-          <button type="button" @click="handleClearSignature" class="app-button app-button-secondary !rounded-lg !bg-slate-100">
+          <button type="button" @click="handleClearSignature" class="app-button app-button-secondary !bg-zinc-100">
             Clear
           </button>
-          <button type="button" @click="handleSaveSignature" class="app-button app-button-primary !rounded-lg">
+          <button type="button" @click="handleSaveSignature" class="app-button app-button-primary cursor-pointer">
             Save Signature
           </button>
         </div>
 
-        <div v-if="form.signature_image_path" class="asset-preview mt-5 !rounded-lg">
+        <div v-if="form.signature_image_path" class="asset-preview mt-5">
           <p class="asset-preview-label">Signature Preview</p>
-          <img :src="form.signature_image_path" alt="Saved signature preview" class="h-24 !rounded-lg object-contain" />
+          <img :src="form.signature_image_path" alt="Saved signature preview" class="h-24 object-contain" />
         </div>
       </div>
 
-      <div class="app-card !rounded-lg border border-slate-200 bg-slate-50/80 p-5">
+      <div class="app-card border border-zinc-300 bg-white p-5">
         <FormField
           id="logo-file"
           label="Logo"
@@ -61,7 +61,7 @@
               ref="logoFileInput"
               type="file"
               accept=".jpg,.jpeg,.png,.gif"
-              class="form-input !rounded-lg file:mr-4 file:rounded-lg file:border-0 file:bg-emerald-600 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-emerald-700"
+              class="form-input file:mr-4 file:border-0 file:bg-emerald-600 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white hover:file:bg-emerald-700"
               :aria-invalid="invalid"
               :aria-describedby="describedBy || undefined"
               @change="handleLogoUpload"
@@ -69,10 +69,10 @@
           </template>
         </FormField>
 
-        <div v-if="form.logo_preview" class="asset-preview mt-5 !rounded-lg">
+        <div v-if="form.logo_preview" class="asset-preview mt-5">
           <p class="asset-preview-label">Logo Preview</p>
           <img :src="form.logo_preview" alt="Uploaded company logo preview" class="h-24 object-contain" />
-          <button type="button" @click="clearLogo" class="app-button app-button-danger mt-4 !rounded-lg">
+          <button type="button" @click="clearLogo" class="app-button app-button-danger mt-4">
             Remove Logo
           </button>
         </div>

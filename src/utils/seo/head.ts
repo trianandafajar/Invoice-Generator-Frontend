@@ -8,7 +8,7 @@ export interface AppRouteMeta {
   ogType?: 'website' | 'article'
 }
 
-const APP_NAME = 'Invoice Generator'
+const APP_NAME = 'Invoicy'
 const THEME_COLOR = '#10b981'
 const DEFAULT_SITE_URL = 'http://localhost:5173'
 

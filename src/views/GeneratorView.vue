@@ -353,20 +353,20 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[linear-gradient(180deg,_#f6fffc_0%,_#ffffff_24%,_#f5f8fb_100%)]">
+  <div class="min-h-screen bg-zinc-50">
     <Header :solid="true" />
 
     <main id="main-content" tabindex="-1" class="px-5 py-10 sm:px-6 lg:px-8">
       <div class="mx-auto max-w-6xl">
         <section class="grid gap-6" aria-labelledby="generator-title">
-          <div class="app-surface overflow-hidden p-8 !rounded-lg">
-            <div class="flex flex-col gap-6 border-b border-slate-200 pb-6 md:flex-row md:items-end md:justify-between">
+          <div class="app-surface overflow-hidden p-8">
+            <div class="flex flex-col gap-6 border-b border-emerald-200 pb-6 md:flex-row md:items-end md:justify-between">
               <div>
                 <p class="section-kicker">Generator</p>
-                <h1 id="generator-title" class="text-3xl font-semibold tracking-tight text-slate-950">
+                <h1 id="generator-title" class="text-3xl font-semibold tracking-tight text-zinc-950">
                   Create polished invoices with confidence.
                 </h1>
-                <p class="mt-2 max-w-2xl text-sm leading-7 text-slate-600">
+                <p class="mt-2 max-w-2xl text-sm leading-7 text-zinc-600">
                   Your existing payload stays the same, while the workflow is now clearer, faster, and more accessible.
                 </p>
               </div>
@@ -381,7 +381,7 @@ onUnmounted(() => {
 
             <div
               v-if="statusMessage"
-              class="mt-6 rounded-2xl border px-5 py-4"
+              class="mt-6 border px-5 py-4"
               :class="{
                 'border-emerald-200 bg-emerald-50 text-emerald-900': statusMessage.type === 'success',
                 'border-amber-200 bg-amber-50 text-amber-900': statusMessage.type === 'info',

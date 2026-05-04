@@ -20,13 +20,13 @@
       {{ errors.items }}
     </p>
 
-    <div class="overflow-hidden !rounded-lg border border-slate-200">
+    <div class="overflow-hidden border border-zinc-300">
       <div class="overflow-x-auto">
         <table class="min-w-full text-sm">
           <caption class="sr-only">
             Editable invoice line items with automatic subtotal and amount calculations.
           </caption>
-          <thead class="bg-slate-950 text-slate-100">
+          <thead class="border-b border-zinc-300 bg-white">
             <tr>
               <th class="table-th">Name</th>
               <th class="table-th">Description</th>
@@ -43,7 +43,7 @@
             <tr
               v-for="(item, index) in items"
               :key="index"
-              class="border-t border-slate-100 align-top"
+              class="border-t border-zinc-200 align-top"
             >
               <td class="p-2">
                 <label :for="`item-name-${index}`" class="sr-only">Item name {{ index + 1 }}</label>
@@ -51,7 +51,7 @@
                   :id="`item-name-${index}`"
                   :value="item.name"
                   type="text"
-                  class="form-input !rounded-lg"
+                  class="form-input"
                   autocomplete="off"
                   @input="emit('updateText', index, 'name', ($event.target as HTMLInputElement).value)"
                 />
@@ -62,7 +62,7 @@
                   :id="`item-description-${index}`"
                   :value="item.description"
                   type="text"
-                  class="form-input !rounded-lg"
+                  class="form-input"
                   autocomplete="off"
                   @input="emit('updateText', index, 'description', ($event.target as HTMLInputElement).value)"
                 />
@@ -75,7 +75,7 @@
                   type="number"
                   min="0"
                   inputmode="decimal"
-                  class="form-input !rounded-lg"
+                  class="form-input"
                   @input="emitNumber(index, 'qty', $event)"
                 />
               </td>
@@ -87,7 +87,7 @@
                   type="number"
                   min="0"
                   inputmode="decimal"
-                  class="form-input !rounded-lg"
+                  class="form-input"
                   @input="emitNumber(index, 'price', $event)"
                 />
               </td>
@@ -97,7 +97,7 @@
                   :id="`item-subtotal-${index}`"
                   :value="formatCurrency(item.subtotal)"
                   type="text"
-                  class="form-input !rounded-lg bg-slate-50"
+                  class="form-input bg-zinc-50"
                   readonly
                 />
               </td>
@@ -107,7 +107,7 @@
                   :id="`item-amount-${index}`"
                   :value="formatCurrency(item.amount)"
                   type="text"
-                  class="form-input !rounded-lg bg-slate-50"
+                  class="form-input bg-zinc-50"
                   readonly
                 />
               </td>
@@ -131,14 +131,14 @@
 
     <div
       v-if="!items.length"
-      class="rounded-[28px] border border-dashed border-slate-300 bg-slate-50 px-6 py-8 text-center"
+      class="border border-dashed border-zinc-400 bg-white px-6 py-8 text-center"
     >
-      <p class="text-base font-medium text-slate-900">No line items yet</p>
-      <p class="mt-2 text-sm text-slate-600">Add at least one line item with name, quantity, and price before submitting.</p>
+      <p class="text-base font-medium text-zinc-900">No line items yet</p>
+      <p class="mt-2 text-sm text-zinc-600">Add at least one line item with name, quantity, and price before submitting.</p>
     </div>
 
     <div class="mt-6 flex flex-wrap items-center gap-4">
-      <button type="button" @click="emit('add')" class="app-button app-button-secondary !rounded-lg">
+      <button type="button" @click="emit('add')" class="app-button app-button-secondary">
         Add Item
       </button>
       <p class="text-sm text-slate-600">Subtotal and amount are calculated automatically from quantity and price.</p>

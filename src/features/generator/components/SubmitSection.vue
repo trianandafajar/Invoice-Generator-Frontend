@@ -1,10 +1,10 @@
 <template>
-  <section class="!rounded-lg border border-slate-200 bg-slate-950 p-6 text-white shadow-[0_18px_50px_rgba(15,23,42,0.16)]">
+  <section class="border border-emerald-200 bg-white p-6 text-zinc-950 shadow-sm">
     <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
       <div>
-        <p class="text-sm font-semibold uppercase tracking-[0.28em] text-emerald-300">Finish</p>
+        <p class="section-kicker">Finish</p>
         <h2 class="mt-2 text-2xl font-semibold">Create invoice and export the PDF.</h2>
-        <p class="mt-2 max-w-2xl text-sm leading-7 text-white/70">
+        <p class="mt-2 max-w-2xl text-sm leading-7 text-zinc-600">
           Your existing create-and-download flow stays intact, now with clearer feedback and safer defaults.
         </p>
       </div>
@@ -13,7 +13,7 @@
         <button
           type="submit"
           :disabled="isSubmitting"
-          class="app-button app-button-primary app-button-lg justify-center !rounded-lg disabled:cursor-not-allowed disabled:opacity-60"
+          class="app-button cursor-pointer app-button-primary app-button-lg justify-center disabled:cursor-not-allowed disabled:opacity-60"
           :aria-busy="isSubmitting"
         >
           {{ isSubmitting ? 'Submitting...' : 'Submit Invoice' }}
@@ -23,7 +23,7 @@
           type="button"
           @click="emit('download')"
           :disabled="isDownloading"
-          class="app-button app-button-secondary app-button-lg justify-center !rounded-lg !border-red-500/80 !bg-red-500/80 !text-white hover:!border-red-500/50 hover:!bg-red-500/60 disabled:cursor-not-allowed disabled:opacity-60"
+          class="app-button app-button-danger app-button-lg justify-center disabled:cursor-not-allowed disabled:opacity-60"
           :aria-busy="isDownloading"
         >
           {{ isDownloading ? 'Downloading...' : 'Download PDF' }}

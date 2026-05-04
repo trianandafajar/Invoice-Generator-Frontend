@@ -1,22 +1,21 @@
 <template>
-  <fieldset
+  <div
+    :id="id"
     :aria-describedby="descriptionId"
-    class="form-section !rounded-lg"
+    class="form-section"
   >
-    <legend class="w-full">
-      <div class="section-heading">
-        <div class="section-icon" aria-hidden="true">
-          <slot name="icon" />
-        </div>
-        <div>
-          <h2 class="text-xl font-semibold text-slate-950">{{ title }}</h2>
-          <p :id="descriptionId" class="mt-1 text-sm text-slate-600">{{ description }}</p>
-        </div>
+    <div class="section-heading">
+      <div class="section-icon" aria-hidden="true">
+        <slot name="icon" />
       </div>
-    </legend>
+      <div>
+        <h2 class="text-xl font-semibold text-zinc-950">{{ title }}</h2>
+        <p :id="descriptionId" class="mt-1 text-sm text-zinc-600">{{ description }}</p>
+      </div>
+    </div>
 
     <slot />
-  </fieldset>
+  </div>
 </template>
 
 <script setup lang="ts">

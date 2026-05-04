@@ -20,7 +20,7 @@
         <textarea
           id="invoice-notes"
           :value="form.notes"
-          class="form-input min-h-32 !rounded-lg"
+          class="form-input min-h-32"
           :aria-invalid="invalid"
           :aria-describedby="describedBy || undefined"
           placeholder="Add notes, terms, or reminders for the client"
