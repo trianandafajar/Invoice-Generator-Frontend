@@ -1,11 +1,10 @@
 <template>
   <header :class="headerClass">
-    <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4 sm:px-6 lg:px-8">
+    <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 py-4">
       <RouterLink to="/" class="flex items-center gap-3 text-zinc-900" aria-label="Go to INVOICE GENERATOR home">
         <LogoMark size="sm" />
         <div>
-          <p class="text-xs font-semibold uppercase tracking-[0.32em] text-emerald-600">INVOICE GENERATOR</p>
-          <p class="text-sm font-medium text-zinc-600">Create polished invoices in minutes</p>
+          <p class="text-md font-semibold uppercase tracking-[0.05rem] text-emerald-600">INVOICE GENERATOR</p>
         </div>
       </RouterLink>
 

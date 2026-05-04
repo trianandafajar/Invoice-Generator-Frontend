@@ -32,7 +32,7 @@ body {
 }
 
 .app-surface {
-  @apply rounded-none border border-zinc-300 bg-white shadow-sm transition duration-200;
+  @apply rounded-2xl border border-zinc-100 bg-white transition duration-200;
 }
 
 .app-card {
@@ -40,7 +40,7 @@ body {
 }
 
 .app-card:hover {
-  @apply -translate-y-1 shadow-md border-zinc-300;
+  @apply border-zinc-200;
 }
 
 .section-kicker {
@@ -56,63 +56,63 @@ body {
 }
 
 .app-button {
-  @apply inline-flex items-center gap-2 rounded-none px-5 py-3 text-sm font-semibold transition duration-200;
+  @apply inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-sm font-medium transition duration-200;
 }
 
 .app-button-lg {
-  @apply px-6 py-3.5 text-base;
+  @apply px-6 py-3 text-sm;
 }
 
 .app-button-primary {
-  @apply bg-emerald-600 text-white shadow-sm hover:bg-emerald-700;
+  @apply bg-emerald-600 text-white hover:bg-emerald-700;
 }
 
 .app-button-secondary {
-  @apply border border-zinc-300 bg-white text-zinc-700 hover:border-emerald-600 hover:text-emerald-700;
+  @apply border border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300 hover:text-zinc-900;
 }
 
 .app-button-danger {
-  @apply border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100;
+  @apply text-rose-600 hover:bg-rose-50;
 }
 
 .form-label {
-  @apply mb-2 block text-sm font-semibold text-zinc-900;
+  @apply mb-2 block text-sm font-medium text-zinc-700;
 }
 
 .form-input {
-  @apply w-full rounded-none border border-zinc-400 bg-white px-4 py-3 text-sm text-zinc-900 shadow-sm outline-none transition focus:border-emerald-500 focus:ring-4 focus:ring-emerald-50;
+  @apply w-full rounded-lg border border-zinc-200 bg-white px-3.5 py-2.5 text-sm text-zinc-900 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100;
 }
 
 .table-th {
-  @apply px-4 py-4 text-left text-xs font-semibold uppercase tracking-[0.2em] bg-white border-b border-zinc-100 text-zinc-700;
+  @apply px-3 py-2.5 text-left text-xs font-medium tracking-wide bg-transparent border-b border-zinc-100 text-zinc-500;
 }
 
 .form-section {
-  @apply rounded-none border border-zinc-300 bg-white p-6 shadow-sm md:p-8;
+  @apply border-t border-zinc-100 pt-8;
 }
 
 .section-heading {
-  @apply mb-6 flex gap-4;
+  @apply mb-6;
 }
 
 .section-icon {
-  @apply flex h-12 w-12 shrink-0 items-center justify-center rounded-none bg-emerald-50 text-emerald-600;
+  @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600;
 }
 
 .status-pill {
-  @apply inline-flex items-center rounded-none border border-zinc-200 bg-zinc-50 px-4 py-2 text-sm font-medium text-zinc-700;
+  @apply inline-flex items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-medium text-zinc-600;
 }
 
 .status-pill-success {
-  @apply border-emerald-200 bg-emerald-50 text-emerald-700;
+  @apply border-emerald-100 bg-emerald-50 text-emerald-700;
 }
 
 .feature-icon {
-  @apply flex h-14 w-14 items-center justify-center rounded-none border border-emerald-200 bg-white text-emerald-600;
+  @apply flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600;
 }
 
 .info-row {
-  @apply flex items-center justify-between gap-4 rounded-none border border-zinc-100 bg-zinc-50/50 px-5 py-4;
+  @apply flex items-center justify-between gap-4 rounded-xl border border-zinc-100 bg-white px-4 py-3;
 }
 
 .info-label {

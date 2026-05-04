@@ -5,13 +5,8 @@
     class="form-section"
   >
     <div class="section-heading">
-      <div class="section-icon" aria-hidden="true">
-        <slot name="icon" />
-      </div>
-      <div>
-        <h2 class="text-xl font-semibold text-zinc-950">{{ title }}</h2>
-        <p :id="descriptionId" class="mt-1 text-sm text-zinc-600">{{ description }}</p>
-      </div>
+      <h2 class="text-base font-semibold text-zinc-950">{{ title }}</h2>
+      <p :id="descriptionId" class="mt-1 text-sm text-zinc-500">{{ description }}</p>
     </div>
 
     <slot />

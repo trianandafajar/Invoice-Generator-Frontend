@@ -356,98 +356,91 @@ onUnmounted(() => {
   <div class="min-h-screen bg-zinc-50">
     <Header :solid="true" />
 
-    <main id="main-content" tabindex="-1" class="px-5 py-10 sm:px-6 lg:px-8">
+    <main id="main-content" tabindex="-1" class="px-5 py-12 sm:px-6 lg:px-8 lg:py-16">
       <div class="mx-auto max-w-6xl">
-        <section class="grid gap-6" aria-labelledby="generator-title">
-          <div class="app-surface overflow-hidden p-8">
-            <div class="flex flex-col gap-6 border-b border-emerald-200 pb-6 md:flex-row md:items-end md:justify-between">
-              <div>
-                <p class="section-kicker">Generator</p>
-                <h1 id="generator-title" class="text-3xl font-semibold tracking-tight text-zinc-950">
-                  Create polished invoices with confidence.
-                </h1>
-                <p class="mt-2 max-w-2xl text-sm leading-7 text-zinc-600">
-                  Your existing payload stays the same, while the workflow is now clearer, faster, and more accessible.
-                </p>
-              </div>
-
-              <div class="flex flex-wrap gap-3">
-                <span class="status-pill app-card">{{ lineItemSummary }}</span>
-                <span v-if="lastCreatedInvoiceId" class="status-pill status-pill-success app-card">
-                  Last invoice ID: {{ lastCreatedInvoiceId }}
-                </span>
-              </div>
+        <section aria-labelledby="generator-title">
+          <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div>
+              <h1 id="generator-title" class="text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">
+                New invoice
+              </h1>
+              <p class="mt-2 text-sm text-zinc-500">{{ lineItemSummary }}</p>
             </div>
 
-            <div
-              v-if="statusMessage"
-              class="mt-6 border px-5 py-4"
-              :class="{
-                'border-emerald-200 bg-emerald-50 text-emerald-900': statusMessage.type === 'success',
-                'border-amber-200 bg-amber-50 text-amber-900': statusMessage.type === 'info',
-                'border-rose-200 bg-rose-50 text-rose-900': statusMessage.type === 'error',
-              }"
-              :role="statusMessage.type === 'error' ? 'alert' : 'status'"
-              aria-live="polite"
-            >
-              <p class="font-semibold">{{ statusMessage.title }}</p>
-              <p class="mt-1 text-sm leading-6">{{ statusMessage.message }}</p>
-            </div>
-
-            <form @submit.prevent="submitForm" class="mt-8 space-y-8" novalidate>
-              <GeneratorOverviewSection
-                :form="form"
-                :errors="errors"
-                @update="updateStringField"
-              />
-
-              <CustomerDetailsSection
-                :form="form"
-                :errors="errors"
-                @update="updateStringField"
-              />
-
-              <BillingContactSection
-                :form="form"
-                :errors="errors"
-                @update-string="updateStringField"
-                @update-number="updateNumberField"
-              />
-
-              <NotesSection
-                :form="form"
-                :errors="errors"
-                @update="updateStringField"
-              />
-
-              <BrandAssetsSection
-                ref="brandAssetsSection"
-                :form="form"
-                :errors="errors"
-                @update-signature="updateSignature"
-                @update-logo="updateLogo"
-                @clear-logo="clearLogo"
-                @announce="setStatus"
-                @clear-error="clearError"
-              />
-
-              <LineItemsSection
-                :items="form.items"
-                :errors="errors"
-                @add="addItem"
-                @remove="removeItem"
-                @update-text="updateItemText"
-                @update-number="updateItemNumber"
-              />
-
-              <SubmitSection
-                :is-submitting="isSubmitting"
-                :is-downloading="isDownloading"
-                :last-created-invoice-id="lastCreatedInvoiceId"
-                @download="downloadPdf()"
-              />
-            </form>
+            <p v-if="lastCreatedInvoiceId" class="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600">
+              <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+              Last invoice #{{ lastCreatedInvoiceId }}
+            </p>
           </div>
+
+          <div
+            v-if="statusMessage"
+            class="mt-6 rounded-xl px-5 py-4"
+            :class="{
+              'bg-emerald-50 text-emerald-900': statusMessage.type === 'success',
+              'bg-amber-50 text-amber-900': statusMessage.type === 'info',
+              'bg-rose-50 text-rose-900': statusMessage.type === 'error',
+            }"
+            :role="statusMessage.type === 'error' ? 'alert' : 'status'"
+            aria-live="polite"
+          >
+            <p class="text-sm font-medium">{{ statusMessage.title }}</p>
+            <p class="mt-1 text-sm leading-6">{{ statusMessage.message }}</p>
+          </div>
+
+          <form @submit.prevent="submitForm" class="mt-10 space-y-12" novalidate>
+            <GeneratorOverviewSection
+              :form="form"
+              :errors="errors"
+              @update="updateStringField"
+            />
+
+            <CustomerDetailsSection
+              :form="form"
+              :errors="errors"
+              @update="updateStringField"
+            />
+
+            <BillingContactSection
+              :form="form"
+              :errors="errors"
+              @update-string="updateStringField"
+              @update-number="updateNumberField"
+            />
+
+            <NotesSection
+              :form="form"
+              :errors="errors"
+              @update="updateStringField"
+            />
+
+            <BrandAssetsSection
+              ref="brandAssetsSection"
+              :form="form"
+              :errors="errors"
+              @update-signature="updateSignature"
+              @update-logo="updateLogo"
+              @clear-logo="clearLogo"
+              @announce="setStatus"
+              @clear-error="clearError"
+            />
+
+            <LineItemsSection
+              :items="form.items"
+              :errors="errors"
+              @add="addItem"
+              @remove="removeItem"
+              @update-text="updateItemText"
+              @update-number="updateItemNumber"
+            />
+
+            <SubmitSection
+              :is-submitting="isSubmitting"
+              :is-downloading="isDownloading"
+              :last-created-invoice-id="lastCreatedInvoiceId"
+              @download="downloadPdf()"
+            />
+          </form>
         </section>
       </div>
     </main>

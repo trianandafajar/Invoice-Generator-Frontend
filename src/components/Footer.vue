@@ -1,13 +1,12 @@
 <template>
   <footer class="border-t border-zinc-300 bg-white">
-    <div class="mx-auto flex max-w-6xl flex-col gap-8 px-5 py-10 sm:px-6 lg:px-8">
+    <div class="mx-auto flex max-w-6xl flex-col gap-8 py-10">
       <div class="flex flex-col justify-between gap-6 md:flex-row md:items-center">
         <div class="max-w-md">
           <div class="flex items-center gap-3">
             <LogoMark size="sm" />
             <div>
-              <p class="text-sm font-semibold uppercase tracking-[0.32em] text-emerald-600">INVOICE GENERATOR</p>
-              <p class="text-xl font-semibold text-zinc-900">Professional invoice workflows without the clutter.</p>
+              <p class="text-md font-semibold uppercase tracking-[0.05rem] text-emerald-600">INVOICE GENERATOR</p>
             </div>
           </div>
           <p class="mt-4 text-sm leading-6 text-zinc-600">
