@@ -6,7 +6,7 @@
           <div class="flex items-center gap-3">
             <LogoMark size="sm" />
             <div>
-              <p class="text-sm font-semibold uppercase tracking-[0.32em] text-emerald-600">Invoicy</p>
+              <p class="text-sm font-semibold uppercase tracking-[0.32em] text-emerald-600">INVOICE GENERATOR</p>
               <p class="text-xl font-semibold text-zinc-900">Professional invoice workflows without the clutter.</p>
             </div>
           </div>
@@ -23,7 +23,7 @@
       </div>
 
       <div class="flex flex-col gap-3 border-t border-zinc-300 pt-6 text-sm text-zinc-500 md:flex-row md:items-center md:justify-between">
-        <p>(c) 2026 Invoicy. All rights reserved.</p>
+        <p>(c) 2026 INVOICE GENERATOR. All rights reserved.</p>
         <p>Designed for fast billing, clean branding, and confident client handoff.</p>
       </div>
     </div>
