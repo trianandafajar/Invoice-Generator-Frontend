@@ -359,20 +359,6 @@ onUnmounted(() => {
     <main id="main-content" tabindex="-1" class="px-5 py-12 sm:px-6 lg:px-8">
       <div class="mx-auto max-w-6xl">
         <section aria-labelledby="generator-title">
-          <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-            <div>
-              <h1 id="generator-title" class="text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">
-                New invoice
-              </h1>
-              <p class="mt-2 text-sm text-zinc-500">{{ lineItemSummary }}</p>
-            </div>
-
-            <p v-if="lastCreatedInvoiceId" class="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-600">
-              <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-              Last invoice #{{ lastCreatedInvoiceId }}
-            </p>
-          </div>
-
           <div
             v-if="statusMessage"
             class="mt-6 rounded-xl px-5 py-4"
@@ -388,7 +374,7 @@ onUnmounted(() => {
             <p class="mt-1 text-sm leading-6">{{ statusMessage.message }}</p>
           </div>
 
-          <form @submit.prevent="submitForm" class="mt-6 space-y-6" novalidate>
+          <form @submit.prevent="submitForm" class=" space-y-6" novalidate>
             <GeneratorOverviewSection
               :form="form"
               :errors="errors"

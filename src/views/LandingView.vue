@@ -70,22 +70,18 @@ const steps = Object.freeze([
     <Header :show-features-link="true" />
 
     <main id="main-content" tabindex="-1">
-      <!-- Hero – content only -->
-      <!-- Hero – bagian kiri dipertahankan, bagian kanan dihapus -->
-      <section class="px-5 pb-20 pt-10 sm:px-6 lg:px-8 lg:pb-24 lg:pt-6" aria-labelledby="landing-hero-title">
-        <div class="mx-auto max-w-6xl lg:items-center">
-          <!-- Kolom kiri (session 1) TIDAK DIUBAH -->
-          <div>
-            <h1 id="landing-hero-title"
-              class="mt-6 max-w-2xl text-5xl font-semibold tracking-tight text-zinc-950 sm:text-6xl">
+      <section class="px-5 pb-20 pt-10 sm:px-6 lg:px-8 lg:pb-20 lg:pt-10" aria-labelledby="landing-hero-title">
+        <div class="mx-auto max-w-6xl">
+          <div class="text-center justify-center max-w-4xl mx-auto">
+            <h1 id="landing-hero-title" class="mt-6 text-5xl font-semibold text-center tracking-tight text-zinc-950 sm:text-6xl">
               Invoices, ready to send.
             </h1>
-            <p class="mt-6 max-w-2xl text-lg leading-8 text-zinc-600">
+            <p class="mt-4 text-lg leading-8 text-zinc-600">
               Prepare branded invoices, capture signatures, and download client-ready PDFs from one streamlined
               workspace.
             </p>
 
-            <div class="mt-8 flex flex-col gap-4 sm:flex-row">
+            <div class="mt-4 flex flex-col gap-4 sm:flex-row justify-center">
               <RouterLink to="/generator" class="app-button app-button-primary app-button-lg justify-center">
                 Open Generator
               </RouterLink>
@@ -94,11 +90,9 @@ const steps = Object.freeze([
               </a>
             </div>
 
-            <div class="mt-10 grid gap-4 max-w-2xl border-t border-zinc-200/70 pt-4 sm:grid-cols-3">
+            <div class="mt-10 grid gap-4 border-t border-zinc-200/70 pt-4 sm:grid-cols-3">
               <div v-for="stat in stats" class="border border-zinc-200 rounded-md p-4" :key="stat.label">
-                <p class="text-3xl font-semibold tracking-tight text-zinc-950">
-                  {{ stat.value }}
-                </p>
+                <p class="text-3xl font-semibold tracking-tight text-zinc-950">{{ stat.value }}</p>
                 <p class="mt-1 text-sm text-zinc-500">{{ stat.label }}</p>
               </div>
             </div>
@@ -107,7 +101,7 @@ const steps = Object.freeze([
       </section>
 
       <section class="px-5 pb-20 sm:px-6 lg:px-8 lg:pb-24" aria-label="Invoice preview">
-        <div class="mx-auto max-w-xl">
+        <div class="mx-auto max-w-4xl">
           <div
             class="relative overflow-hidden rounded-3xl border border-zinc-100 bg-white p-7 text-zinc-950 shadow-[0_30px_60px_-30px_rgba(15,23,42,0.18)]">
             <div class="flex items-center justify-between">
@@ -125,9 +119,7 @@ const steps = Object.freeze([
             <div class="mt-4 flex items-center justify-between">
               <div>
                 <p class="text-xs uppercase tracking-wider text-zinc-400">Invoice</p>
-                <p class="mt-1 text-3xl font-semibold tracking-tight text-zinc-950">
-                  INV-204886234
-                </p>
+                <p class="mt-1 text-3xl font-semibold tracking-tight text-zinc-950">INV-204886234</p>
               </div>
             </div>
 
@@ -157,9 +149,7 @@ const steps = Object.freeze([
             <div class="mt-4 flex items-center justify-between border-t border-zinc-100 pt-6">
               <div>
                 <p class="text-xs text-zinc-400">Total</p>
-                <p class="mt-1 text-xl font-semibold tracking-tight text-zinc-950">
-                  $2,040
-                </p>
+                <p class="mt-1 text-xl font-semibold tracking-tight text-zinc-950">$2,040</p>
               </div>
               <button type="button"
                 class="inline-flex items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-sm font-medium text-white">
@@ -223,7 +213,6 @@ const steps = Object.freeze([
                   class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-xs font-medium text-white">
                   {{ index + 1 }}
                 </span>
-                <!-- Deskripsi dihapus, hanya judul -->
                 <span class="font-medium text-zinc-900">{{ step.title }}</span>
               </li>
             </ol>

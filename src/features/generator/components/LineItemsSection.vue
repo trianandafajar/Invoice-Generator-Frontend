@@ -138,7 +138,7 @@
     </div>
 
     <div class="mt-6 flex flex-wrap items-center gap-4">
-      <button type="button" @click="emit('add')" class="app-button app-button-secondary">
+      <button type="button" @click="emit('add')" class="app-button app-button-secondary cursor-pointer">
         Add Item
       </button>
       <p class="text-sm text-slate-600">Subtotal and amount are calculated automatically from quantity and price.</p>
