@@ -5,8 +5,13 @@
     class="form-section"
   >
     <div class="section-heading">
-      <h2 class="text-base font-semibold text-zinc-950">{{ title }}</h2>
-      <p :id="descriptionId" class="mt-1 text-sm text-zinc-500">{{ description }}</p>
+      <div v-if="$slots.icon" class="section-icon">
+        <slot name="icon" />
+      </div>
+      <div class="flex-1">
+        <h2 class="text-base font-semibold text-zinc-950">{{ title }}</h2>
+        <p :id="descriptionId" class="mt-1 text-sm text-zinc-500">{{ description }}</p>
+      </div>
     </div>
 
     <slot />

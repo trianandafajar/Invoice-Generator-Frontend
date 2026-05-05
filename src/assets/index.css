@@ -76,11 +76,19 @@ body {
 }
 
 .form-label {
-  @apply mb-2 block text-sm font-medium text-zinc-700;
+  @apply mb-2 block text-sm font-medium text-zinc-800;
 }
 
 .form-input {
-  @apply w-full rounded-lg border border-zinc-200 bg-white px-3.5 py-2.5 text-sm text-zinc-900 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100;
+  @apply w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-900 shadow-sm
+    placeholder:text-zinc-400
+    outline-none transition-all duration-200
+    hover:border-zinc-300 hover:shadow
+    focus:border-emerald-500 focus:bg-white focus:shadow-md focus:ring-4 focus:ring-emerald-500/10
+    aria-[invalid=true]:border-rose-300
+    aria-[invalid=true]:focus:border-rose-500 aria-[invalid=true]:focus:ring-rose-500/10
+    disabled:cursor-not-allowed disabled:bg-zinc-50 disabled:text-zinc-500
+    read-only:cursor-default read-only:bg-zinc-50 read-only:text-zinc-600 read-only:shadow-none read-only:hover:border-zinc-200 read-only:hover:shadow-sm;
 }
 
 .table-th {
@@ -88,15 +96,15 @@ body {
 }
 
 .form-section {
-  @apply border-t border-zinc-100 pt-8;
+  @apply rounded-lg border border-zinc-200/80 bg-white p-6 shadow-sm transition-shadow duration-200 sm:p-8 hover:shadow;
 }
 
 .section-heading {
-  @apply mb-6;
+  @apply mb-6 flex items-start gap-4 border-b border-zinc-100 pb-5;
 }
 
 .section-icon {
-  @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600;
+  @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-emerald-600;
 }
 
 .status-pill {

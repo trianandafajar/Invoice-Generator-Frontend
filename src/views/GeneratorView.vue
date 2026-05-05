@@ -356,7 +356,7 @@ onUnmounted(() => {
   <div class="min-h-screen bg-zinc-50">
     <Header :solid="true" />
 
-    <main id="main-content" tabindex="-1" class="px-5 py-12 sm:px-6 lg:px-8 lg:py-16">
+    <main id="main-content" tabindex="-1" class="px-5 py-12 sm:px-6 lg:px-8">
       <div class="mx-auto max-w-6xl">
         <section aria-labelledby="generator-title">
           <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
@@ -388,7 +388,7 @@ onUnmounted(() => {
             <p class="mt-1 text-sm leading-6">{{ statusMessage.message }}</p>
           </div>
 
-          <form @submit.prevent="submitForm" class="mt-10 space-y-12" novalidate>
+          <form @submit.prevent="submitForm" class="mt-6 space-y-6" novalidate>
             <GeneratorOverviewSection
               :form="form"
               :errors="errors"
