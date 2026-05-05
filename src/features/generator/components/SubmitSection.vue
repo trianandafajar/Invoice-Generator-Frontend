@@ -1,15 +1,5 @@
 <template>
-  <FormSection
-    id="finish-invoice"
-    title="Create invoice and export the PDF."
-    description="Your existing create-and-download flow stays intact, now with clearer feedback and safer defaults."
-  >
-    <template #icon>
-      <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8">
-        <path d="M5 12.5 10 17.5l9-11" stroke-linecap="round" stroke-linejoin="round" />
-      </svg>
-    </template>
-
+  <div id="finish-invoice" class="form-section">
     <div class="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
       <button
         type="submit"
@@ -30,12 +20,10 @@
         {{ isDownloading ? 'Downloading...' : 'Download PDF' }}
       </button>
     </div>
-  </FormSection>
+  </div>
 </template>
 
 <script setup lang="ts">
-import FormSection from './FormSection.vue'
-
 defineProps<{
   isSubmitting: boolean
   isDownloading: boolean

@@ -73,7 +73,8 @@ const steps = Object.freeze([
       <section class="px-5 pb-20 pt-10 sm:px-6 lg:px-8 lg:pb-20 lg:pt-10" aria-labelledby="landing-hero-title">
         <div class="mx-auto max-w-6xl">
           <div class="text-center justify-center max-w-4xl mx-auto">
-            <h1 id="landing-hero-title" class="mt-6 text-5xl font-semibold text-center tracking-tight text-zinc-950 sm:text-6xl">
+            <h1 id="landing-hero-title"
+              class="mt-6 text-5xl font-semibold text-center tracking-tight text-zinc-950 sm:text-6xl">
               Invoices, ready to send.
             </h1>
             <p class="mt-4 text-lg leading-8 text-zinc-600">
@@ -191,15 +192,18 @@ const steps = Object.freeze([
         <div class="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2">
           <div>
             <p class="section-kicker">Why teams choose it</p>
-            <h2 id="why-teams-title" class="section-title">Built to remove friction.</h2>
-            <ul class="mt-8 space-y-5">
-              <li v-for="point in differentiators" :key="point.title" class="flex gap-3">
-                <svg viewBox="0 0 20 20" class="mt-0.5 h-5 w-5 shrink-0 fill-none stroke-emerald-600" stroke-width="2"
-                  aria-hidden="true">
-                  <path d="m4 10 4 4 8-8" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-                <!-- Deskripsi dihapus, hanya judul -->
-                <span class="font-medium text-zinc-900">{{ point.title }}</span>
+            <h2 id="why-teams-title" class="section-title leading-none">Built to remove friction.</h2>
+
+            <ul class="mt-4 space-y-2">
+              <li v-for="point in differentiators" :key="point.title"
+                class="flex items-center gap-4 rounded-xl border border-zinc-100 bg-white p-4 shadow shadow-zinc-200/50">
+                <span
+                  class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+                  <svg viewBox="0 0 20 20" class="h-5 w-5 fill-none stroke-current" stroke-width="2" aria-hidden="true">
+                    <path d="m4 10 4 4 8-8" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </span>
+                <span class="text-sm font-semibold text-zinc-900">{{ point.title }}</span>
               </li>
             </ul>
           </div>
@@ -207,19 +211,26 @@ const steps = Object.freeze([
           <div>
             <p class="section-kicker">How it works</p>
             <h2 class="section-title">Three steps to a PDF.</h2>
-            <ol class="mt-8 space-y-6">
-              <li v-for="(step, index) in steps" :key="step.title" class="flex gap-4">
+
+            <ol class="mt-4 space-y-2">
+              <li v-for="(step, index) in steps" :key="step.title"
+                class="flex items-start gap-5 pb-6 relative pl-10 last:pb-0">
+                <span class="absolute left-4 top-0 h-full w-px bg-zinc-200 last:hidden" aria-hidden="true"></span>
+
                 <span
-                  class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-xs font-medium text-white">
+                  class="absolute left-0 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-xs font-bold text-white">
                   {{ index + 1 }}
                 </span>
-                <span class="font-medium text-zinc-900">{{ step.title }}</span>
+
+                <span class="block pt-1 text-base font-medium text-zinc-900">{{ step.title }}</span>
               </li>
             </ol>
-            <RouterLink to="/generator" class="app-button app-button-primary app-button-lg mt-10">
+
+            <RouterLink to="/generator" class="app-button app-button-primary app-button-lg mt-9.5 inline-flex">
               Start Creating Invoices
             </RouterLink>
           </div>
+
         </div>
       </section>
     </main>
