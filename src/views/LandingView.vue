@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import Footer from '../components/Footer.vue'
 import Header from '../components/Header.vue'
-import LogoMark from '../components/LogoMark.vue'
 import MarketingFeatureIcon from '../components/MarketingFeatureIcon.vue'
 import { RouterLink } from 'vue-router'
 
@@ -9,11 +8,6 @@ const stats = Object.freeze([
   { value: '3 min', label: 'To prepare an invoice' },
   { value: 'PDF', label: 'Client-ready export' },
   { value: '1 flow', label: 'Entry to download' },
-])
-
-const previewItems = Object.freeze([
-  { name: 'Creative Direction', meta: '1 project milestone', price: '$1,200' },
-  { name: 'UI Design Support', meta: '12 billable hours', price: '$840' },
 ])
 
 const features = Object.freeze([
@@ -34,33 +28,18 @@ const features = Object.freeze([
   },
 ])
 
-const differentiators = Object.freeze([
-  {
-    title: 'Cleaner client output',
-    description: 'Focuses on the information that matters most.',
-  },
-  {
-    title: 'Faster repeat work',
-    description: 'Sectioned inputs and live previews remove friction.',
-  },
-  {
-    title: 'Confident handoff',
-    description: 'Collect, attach, and export without switching tools.',
-  },
-])
-
 const steps = Object.freeze([
   {
     title: 'Enter details',
-    description: 'Invoice metadata, billing, and customer contact.',
+    description: 'Invoice metadata and customer contact.',
   },
   {
     title: 'Attach assets',
-    description: 'Signature, logo, and line items with totals.',
+    description: 'Signature, logo, and line items.',
   },
   {
     title: 'Export PDF',
-    description: 'Submit and download a client-ready PDF.',
+    description: 'Download a client-ready PDF.',
   },
 ])
 </script>
@@ -70,167 +49,104 @@ const steps = Object.freeze([
     <Header :show-features-link="true" />
 
     <main id="main-content" tabindex="-1">
-      <section class="px-5 pb-20 pt-10 sm:px-6 lg:px-8 lg:pb-20 lg:pt-10" aria-labelledby="landing-hero-title">
-        <div class="mx-auto max-w-6xl">
-          <div class="text-center justify-center max-w-4xl mx-auto">
-            <h1 id="landing-hero-title"
-              class="mt-6 text-5xl font-semibold text-center tracking-tight text-zinc-950 sm:text-6xl">
-              Invoices, ready to send.
-            </h1>
-            <p class="mt-4 text-lg leading-8 text-zinc-600">
-              Prepare branded invoices, capture signatures, and download client-ready PDFs from one streamlined
-              workspace.
-            </p>
+      <section class="px-5 pt-10 sm:px-6 lg:px-8 lg:pt-20 overflow-hidden" aria-labelledby="landing-hero-title">
+        <div class="mx-auto max-w-7xl">
+          <div class="grid gap-12 lg:grid-cols-2 items-center">
+            <div class="max-w-2xl">
+              <h1 id="landing-hero-title"
+                class="text-5xl font-semibold tracking-tight text-zinc-950 sm:text-6xl leading-[1.1]">
+                Invoices, <br class="hidden sm:block" />
+                <span class="text-emerald-600">ready to send.</span>
+              </h1>
+              <p class="mt-6 text-lg leading-8 text-zinc-600">
+                A streamlined workspace to prepare branded invoices, capture signatures, and download client-ready PDFs
+                in minutes.
+              </p>
 
-            <div class="mt-4 flex flex-col gap-4 sm:flex-row justify-center">
-              <RouterLink to="/generator" class="app-button app-button-primary app-button-lg justify-center">
-                Open Generator
-              </RouterLink>
-              <a href="#features" class="app-button app-button-secondary app-button-lg justify-center">
-                Explore Features
-              </a>
+              <div class="mt-10 flex flex-col gap-4 sm:flex-row">
+                <RouterLink to="/generator" class="app-button app-button-primary app-button-lg justify-center px-8">
+                  Open Generator
+                </RouterLink>
+                <a href="#features" class="app-button app-button-secondary app-button-lg justify-center px-8">
+                  Explore Features
+                </a>
+              </div>
             </div>
 
-            <div class="mt-10 grid gap-4 border-t border-zinc-200/70 pt-4 sm:grid-cols-3">
-              <div v-for="stat in stats" class="border border-zinc-200 rounded-md p-4" :key="stat.label">
-                <p class="text-3xl font-semibold tracking-tight text-zinc-950">{{ stat.value }}</p>
-                <p class="mt-1 text-sm text-zinc-500">{{ stat.label }}</p>
-              </div>
+            <div class="relative lg:scale-110 lg:translate-x-10">
+              <!-- Subtle background glow -->
+              <div class="absolute inset-0 bg-emerald-500/10 blur-[100px] rounded-full -z-10"></div>
+              <img src="/preview1.png" alt="Invoice Generator Dashboard Preview"
+                class="w-full h-auto drop-shadow-[0_32px_64px_rgba(0,0,0,0.12)]" />
+            </div>
+          </div>
+
+          <div class="mt-20 grid gap-4 border-t border-zinc-200/70 pt-10 sm:grid-cols-3 mb-20">
+            <div v-for="stat in stats" class="flex flex-col items-center sm:items-start" :key="stat.label">
+              <p class="text-3xl font-semibold tracking-tight text-zinc-950">{{ stat.value }}</p>
+              <p class="mt-1 text-sm text-zinc-500 font-medium">{{ stat.label }}</p>
             </div>
           </div>
         </div>
       </section>
 
-      <section class="px-5 pb-20 sm:px-6 lg:px-8 lg:pb-24" aria-label="Invoice preview">
-        <div class="mx-auto max-w-4xl">
-          <div
-            class="relative overflow-hidden rounded-3xl border border-zinc-100 bg-white p-7 text-zinc-950 shadow-[0_30px_60px_-30px_rgba(15,23,42,0.18)]">
-            <div class="flex items-center justify-between">
-              <LogoMark size="sm" class-name="shrink-0" />
-              <span class="inline-flex items-center gap-1.5 text-xs text-zinc-500">
-                <span class="relative flex h-1.5 w-1.5">
-                  <span
-                    class="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
-                  <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
-                </span>
-                Live preview
-              </span>
-            </div>
-
-            <div class="mt-4 flex items-center justify-between">
-              <div>
-                <p class="text-xs uppercase tracking-wider text-zinc-400">Invoice</p>
-                <p class="mt-1 text-3xl font-semibold tracking-tight text-zinc-950">INV-204886234</p>
-              </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-6 border-t border-zinc-100 pt-4 text-sm">
-              <div>
-                <p class="text-xs text-zinc-400">Client</p>
-                <p class="mt-1 font-medium text-zinc-900">Northwind Studio</p>
-              </div>
-              <div>
-                <p class="text-xs text-zinc-400">Due</p>
-                <p class="mt-1 font-medium text-zinc-900">22 Mar 2026</p>
-              </div>
-            </div>
-
-            <div class="mt-4 border-t border-zinc-100 pt-4">
-              <ul class="divide-y divide-zinc-100 text-sm">
-                <li v-for="item in previewItems" :key="item.name" class="flex items-center justify-between py-3">
-                  <div>
-                    <p class="font-medium text-zinc-900">{{ item.name }}</p>
-                    <p class="text-xs text-zinc-400">{{ item.meta }}</p>
-                  </div>
-                  <p class="font-medium text-zinc-900">{{ item.price }}</p>
-                </li>
-              </ul>
-            </div>
-
-            <div class="mt-4 flex items-center justify-between border-t border-zinc-100 pt-6">
-              <div>
-                <p class="text-xs text-zinc-400">Total</p>
-                <p class="mt-1 text-xl font-semibold tracking-tight text-zinc-950">$2,040</p>
-              </div>
-              <button type="button"
-                class="inline-flex items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-sm font-medium text-white">
-                <svg class="h-4 w-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8"
-                  aria-hidden="true">
-                  <path d="M10 4v9m0 0 3.5-3.5M10 13 6.5 9.5M5 16h10" stroke-linecap="round" stroke-linejoin="round" />
-                </svg>
-                Download PDF
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="features" class="px-5 py-4 sm:px-6 lg:px-8" aria-labelledby="features-title">
+      <section id="features" class="px-5 py-24 sm:px-6 lg:px-8 bg-white border-y border-zinc-200"
+        aria-labelledby="features-title">
         <div class="mx-auto max-w-6xl">
-          <div class="max-w-xl">
+          <div class="text-center max-w-2xl mx-auto mb-16">
             <p class="section-kicker">Features</p>
             <h2 id="features-title" class="section-title">Everything you need.</h2>
           </div>
 
-          <div class="mt-10 grid gap-6 sm:grid-cols-3">
-            <article v-for="feature in features" :key="feature.title" class="border border-zinc-200 rounded-xl p-5">
-              <!-- Ikon tanpa background -->
-              <div class="flex h-10 w-10 items-center justify-center rounded-xl text-emerald-600">
+          <div class="grid gap-8 sm:grid-cols-3">
+            <article v-for="feature in features" :key="feature.title"
+              class="bg-zinc-50 border border-zinc-200 rounded-2xl p-8 hover:shadow-md transition-shadow">
+              <div class="flex h-12 w-12 items-center justify-center bg-emerald-600 text-white rounded-sm">
                 <MarketingFeatureIcon :name="feature.icon" />
               </div>
-              <h3 class="mt-5 text-lg font-semibold leading-tight text-zinc-950">
+              <h3 class="mt-6 text-xl font-semibold leading-tight text-zinc-950">
                 {{ feature.title }}
               </h3>
-              <p class="mt-2 text-sm leading-tight text-zinc-600 text-justify">
+              <p class="mt-3 text-zinc-600 leading-relaxed">
                 {{ feature.description }}
               </p>
             </article>
           </div>
         </div>
       </section>
-      <section class="px-5 pb-20 lg:pt-32 sm:px-6 lg:px-8" aria-labelledby="why-teams-title">
-        <div class="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2">
-          <div>
-            <p class="section-kicker">Why teams choose it</p>
-            <h2 id="why-teams-title" class="section-title leading-none">Built to remove friction.</h2>
 
-            <ul class="mt-4 space-y-2">
-              <li v-for="point in differentiators" :key="point.title"
-                class="flex items-center gap-4 rounded-xl border border-zinc-100 bg-white p-4 shadow shadow-zinc-200/50">
-                <span
-                  class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
-                  <svg viewBox="0 0 20 20" class="h-5 w-5 fill-none stroke-current" stroke-width="2" aria-hidden="true">
-                    <path d="m4 10 4 4 8-8" stroke-linecap="round" stroke-linejoin="round" />
-                  </svg>
-                </span>
-                <span class="text-sm font-semibold text-zinc-900">{{ point.title }}</span>
-              </li>
-            </ul>
+      <section class="px-5 py-20 sm:px-6 lg:px-8 lg:py-32" aria-labelledby="how-it-works-title">
+        <div class="mx-auto grid max-w-6xl gap-16 lg:grid-cols-2 items-center">
+          <div class="order-2 lg:order-1">
+            <div class="relative">
+              <img src="/preview2.png" alt="Invoice PDF Preview" class="w-full h-auto" />
+            </div>
           </div>
 
-          <div>
-            <p class="section-kicker">How it works</p>
-            <h2 class="section-title">Three steps to a PDF.</h2>
+          <div class="order-1 lg:order-2">
+            <p class="section-kicker">Workflow</p>
+            <h2 id="how-it-works-title" class="section-title">Three steps to a PDF.</h2>
+            <p class="mt-4 text-zinc-600 mb-8">Streamlined process to get your invoices ready in record time.</p>
 
-            <ol class="mt-4 space-y-2">
-              <li v-for="(step, index) in steps" :key="step.title"
-                class="flex items-start gap-5 pb-6 relative pl-10 last:pb-0">
-                <span class="absolute left-4 top-0 h-full w-px bg-zinc-200 last:hidden" aria-hidden="true"></span>
-
+            <ol class="space-y-6">
+              <li v-for="(step, index) in steps" :key="step.title" class="flex items-start gap-5 relative">
                 <span
-                  class="absolute left-0 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-xs font-bold text-white">
+                  class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-sm font-bold text-white shadow-md shadow-emerald-600/20">
                   {{ index + 1 }}
                 </span>
-
-                <span class="block pt-1 text-base font-medium text-zinc-900">{{ step.title }}</span>
+                <div>
+                  <h3 class="text-lg font-semibold text-zinc-900">{{ step.title }}</h3>
+                  <p class="mt-1 text-zinc-600">{{ step.description }}</p>
+                </div>
               </li>
             </ol>
 
-            <RouterLink to="/generator" class="app-button app-button-primary app-button-lg mt-9.5 inline-flex">
-              Start Creating Invoices
-            </RouterLink>
+            <div class="mt-10">
+              <RouterLink to="/generator" class="app-button app-button-primary app-button-lg inline-flex">
+                Start Creating Invoices
+              </RouterLink>
+            </div>
           </div>
-
         </div>
       </section>
     </main>
