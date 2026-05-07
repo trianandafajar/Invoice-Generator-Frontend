@@ -354,7 +354,7 @@ onUnmounted(() => {
 
 <template>
   <div class="min-h-screen bg-zinc-50">
-    <Header :solid="true" />
+    <Header :solid="true" :show-features-link="true" />
 
     <main id="main-content" tabindex="-1" class="px-5 py-12 sm:px-6 lg:px-8">
       <div class="mx-auto max-w-6xl">

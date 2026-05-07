@@ -51,42 +51,60 @@ const steps = Object.freeze([
     <main id="main-content" tabindex="-1">
 
       <!-- Hero Section -->
-      <section class="px-5 pt-12 pb-0 sm:px-6 sm:pt-16 lg:px-8 lg:pt-20 overflow-hidden" aria-labelledby="landing-hero-title">
-        <div class="mx-auto max-w-6xl">
+      <section class="min-h-screen flex items-center px-5 py-10 sm:px-6 lg:px-8 overflow-hidden"
+        aria-labelledby="landing-hero-title">
+        <div class="mx-auto max-w-6xl w-full">
           <div class="grid gap-10 lg:gap-12 lg:grid-cols-2 items-center">
-            <div class="text-center lg:text-left mx-auto lg:mx-0 max-w-xl">
+
+            <!-- IMAGE FIRST ON MOBILE -->
+            <div class="order-1 lg:order-2 relative flex justify-center lg:justify-end lg:scale-110 lg:translate-x-10">
+              <div class="absolute inset-0 bg-emerald-500/10 blur-[80px] rounded-full -z-10"></div>
+
+              <img src="/preview1.png" alt="Invoice Generator Dashboard Preview"
+                class="w-full max-w-sm sm:max-w-md lg:max-w-none h-auto drop-shadow-[0_24px_48px_rgba(0,0,0,0.10)]" />
+            </div>
+
+            <!-- TEXT -->
+            <div class="order-2 lg:order-1 text-center lg:text-left mx-auto lg:mx-0 max-w-xl">
               <h1 id="landing-hero-title"
                 class="text-4xl font-semibold tracking-tight text-zinc-950 sm:text-5xl lg:text-6xl leading-[1.1]">
-                Invoices, <br class="hidden sm:block" />
+                Invoices,
+                <br class="hidden sm:block" />
                 <span class="text-emerald-600">ready to send.</span>
               </h1>
+
               <p class="mt-5 text-base sm:text-lg leading-7 sm:leading-8 text-zinc-600">
-                A streamlined workspace to prepare branded invoices, capture signatures, and download client-ready PDFs in minutes.
+                A streamlined workspace to prepare branded invoices,
+                capture signatures, and download client-ready PDFs in minutes.
               </p>
 
               <div class="mt-8 flex flex-col gap-3 sm:flex-row justify-center lg:justify-start">
-                <RouterLink to="/generator" class="app-button app-button-primary app-button-lg justify-center px-8">
+                <RouterLink to="/generator"
+                  class="app-button app-button-primary app-button-lg justify-center px-8 whitespace-nowrap">
                   Open Generator
                 </RouterLink>
-                <a href="#features" class="app-button app-button-secondary app-button-lg justify-center px-8">
+
+                <a href="#features"
+                  class="app-button app-button-secondary app-button-lg justify-center px-8 whitespace-nowrap">
                   Explore Features
                 </a>
               </div>
             </div>
 
-            <div class="relative flex justify-center lg:justify-end mt-4 lg:mt-0 lg:scale-110 lg:translate-x-10">
-              <div class="absolute inset-0 bg-emerald-500/10 blur-[80px] rounded-full -z-10"></div>
-              <img src="/preview1.png" alt="Invoice Generator Dashboard Preview"
-                class="w-full max-w-lg lg:max-w-none h-auto drop-shadow-[0_24px_48px_rgba(0,0,0,0.10)]" />
-            </div>
           </div>
 
-          <!-- Stats Row -->
+          <!-- Stats -->
           <div class="mt-12 sm:mt-16 border-t border-zinc-200/70 py-10 sm:py-14 mb-4">
             <div class="grid grid-cols-3 gap-4 sm:gap-8 items-center">
               <div v-for="stat in stats" class="flex flex-col items-center text-center" :key="stat.label">
-                <p class="text-2xl sm:text-4xl font-bold tracking-tight text-zinc-950">{{ stat.value }}</p>
-                <p class="mt-1 sm:mt-2 text-[10px] sm:text-sm text-zinc-500 font-medium uppercase tracking-wider leading-tight">{{ stat.label }}</p>
+                <p class="text-2xl sm:text-4xl font-bold tracking-tight text-zinc-950">
+                  {{ stat.value }}
+                </p>
+
+                <p
+                  class="mt-1 sm:mt-2 text-[10px] sm:text-sm text-zinc-500 font-medium uppercase tracking-wider leading-tight">
+                  {{ stat.label }}
+                </p>
               </div>
             </div>
           </div>
@@ -131,7 +149,8 @@ const steps = Object.freeze([
           <div class="order-1 lg:order-2">
             <p class="section-kicker">Workflow</p>
             <h2 id="how-it-works-title" class="section-title">Three steps to a PDF.</h2>
-            <p class="mt-3 sm:mt-4 text-zinc-600 mb-6 sm:mb-8 text-sm sm:text-base">Streamlined process to get your invoices ready in record time.</p>
+            <p class="mt-3 sm:mt-4 text-zinc-600 mb-6 sm:mb-8 text-sm sm:text-base">Streamlined process to get your
+              invoices ready in record time.</p>
 
             <ol class="space-y-5 sm:space-y-6">
               <li v-for="(step, index) in steps" :key="step.title" class="flex items-start gap-4 sm:gap-5 relative">
