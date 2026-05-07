@@ -55,12 +55,12 @@ function resetErrors() {
 }
 
 function updateStringField(field: keyof InvoiceFormState, value: string) {
-  ;(form[field] as string) = value
+  ; (form[field] as string) = value
   clearError(String(field))
 }
 
 function updateNumberField(field: keyof InvoiceFormState, value: number) {
-  ;(form[field] as number) = Math.max(0, value)
+  ; (form[field] as number) = Math.max(0, value)
   clearError(String(field))
 }
 
@@ -135,7 +135,7 @@ function resetForm() {
   const freshState = createInitialForm()
 
   for (const key of Object.keys(freshState) as (keyof InvoiceFormState)[]) {
-    ;(form[key] as InvoiceFormState[typeof key]) = freshState[key]
+    ; (form[key] as InvoiceFormState[typeof key]) = freshState[key]
   }
 
   brandAssetsSection.value?.clearSignaturePad()
@@ -359,73 +359,34 @@ onUnmounted(() => {
     <main id="main-content" tabindex="-1" class="px-5 py-12 sm:px-6 lg:px-8">
       <div class="mx-auto max-w-6xl">
         <section aria-labelledby="generator-title">
-          <div
-            v-if="statusMessage"
-            class="mt-6 rounded-xl px-5 py-4"
-            :class="{
-              'bg-emerald-50 text-emerald-900': statusMessage.type === 'success',
-              'bg-amber-50 text-amber-900': statusMessage.type === 'info',
-              'bg-rose-50 text-rose-900': statusMessage.type === 'error',
-            }"
-            :role="statusMessage.type === 'error' ? 'alert' : 'status'"
-            aria-live="polite"
-          >
+          <div v-if="statusMessage" class="mt-6 rounded-xl px-5 py-4" :class="{
+            'bg-emerald-50 text-emerald-900': statusMessage.type === 'success',
+            'bg-amber-50 text-amber-900': statusMessage.type === 'info',
+            'bg-rose-50 text-rose-900': statusMessage.type === 'error',
+          }" :role="statusMessage.type === 'error' ? 'alert' : 'status'" aria-live="polite">
             <p class="text-sm font-medium">{{ statusMessage.title }}</p>
             <p class="mt-1 text-sm leading-6">{{ statusMessage.message }}</p>
           </div>
 
           <form @submit.prevent="submitForm" class=" space-y-6" novalidate>
-            <GeneratorOverviewSection
-              :form="form"
-              :errors="errors"
-              @update="updateStringField"
-            />
+            <GeneratorOverviewSection :form="form" :errors="errors" @update="updateStringField" />
 
-            <CustomerDetailsSection
-              :form="form"
-              :errors="errors"
-              @update="updateStringField"
-            />
+            <CustomerDetailsSection :form="form" :errors="errors" @update="updateStringField" />
 
-            <BillingContactSection
-              :form="form"
-              :errors="errors"
-              @update-string="updateStringField"
-              @update-number="updateNumberField"
-            />
+            <BillingContactSection :form="form" :errors="errors" @update-string="updateStringField"
+              @update-number="updateNumberField" />
 
-            <NotesSection
-              :form="form"
-              :errors="errors"
-              @update="updateStringField"
-            />
+            <NotesSection :form="form" :errors="errors" @update="updateStringField" />
 
-            <BrandAssetsSection
-              ref="brandAssetsSection"
-              :form="form"
-              :errors="errors"
-              @update-signature="updateSignature"
-              @update-logo="updateLogo"
-              @clear-logo="clearLogo"
-              @announce="setStatus"
-              @clear-error="clearError"
-            />
+            <BrandAssetsSection ref="brandAssetsSection" :form="form" :errors="errors"
+              @update-signature="updateSignature" @update-logo="updateLogo" @clear-logo="clearLogo"
+              @announce="setStatus" @clear-error="clearError" />
 
-            <LineItemsSection
-              :items="form.items"
-              :errors="errors"
-              @add="addItem"
-              @remove="removeItem"
-              @update-text="updateItemText"
-              @update-number="updateItemNumber"
-            />
+            <LineItemsSection :items="form.items" :errors="errors" @add="addItem" @remove="removeItem"
+              @update-text="updateItemText" @update-number="updateItemNumber" />
 
-            <SubmitSection
-              :is-submitting="isSubmitting"
-              :is-downloading="isDownloading"
-              :last-created-invoice-id="lastCreatedInvoiceId"
-              @download="downloadPdf()"
-            />
+            <SubmitSection :is-submitting="isSubmitting" :is-downloading="isDownloading"
+              :last-created-invoice-id="lastCreatedInvoiceId" @download="downloadPdf()" />
           </form>
         </section>
       </div>

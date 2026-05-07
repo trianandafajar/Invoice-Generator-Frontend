@@ -5,9 +5,8 @@
     description="Add billable work, quantities, and pricing details."
   >
     <template #icon>
-      <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8">
-        <path d="M5 7.75h14M5 12h14M5 16.25h14" stroke-linecap="round" />
-        <path d="M8 5v14M16 5v14" stroke-linecap="round" />
+      <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round" stroke-linejoin="round" />
       </svg>
     </template>
 
@@ -118,8 +117,8 @@
                   :aria-label="`Remove item ${index + 1}`"
                   @click="emit('remove', index)"
                 >
-                  <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M6 6l12 12M18 6 6 18" stroke-linecap="round" />
+                  <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M18 6 6 18M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" />
                   </svg>
                 </button>
               </td>

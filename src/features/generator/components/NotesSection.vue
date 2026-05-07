@@ -5,8 +5,8 @@
     description="Optional context or billing instructions to include with the invoice."
   >
     <template #icon>
-      <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8">
-        <path d="M7 6.75h10M7 11.75h10M7 16.75h6" stroke-linecap="round" />
+      <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke-linecap="round" stroke-linejoin="round" />
       </svg>
     </template>
 

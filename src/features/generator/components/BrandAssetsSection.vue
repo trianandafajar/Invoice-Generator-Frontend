@@ -5,10 +5,10 @@
     description="Capture a signature and upload your company logo for the final PDF."
   >
     <template #icon>
-      <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8">
-        <path d="M4.75 7A2.25 2.25 0 0 1 7 4.75h10A2.25 2.25 0 0 1 19.25 7v10A2.25 2.25 0 0 1 17 19.25H7A2.25 2.25 0 0 1 4.75 17V7Z" />
-        <path d="m8 15 2.5-3 2.25 2.25L16 10.5l2 2.5" stroke-linecap="round" stroke-linejoin="round" />
-        <circle cx="9" cy="9" r="1" fill="currentColor" stroke="none" />
+      <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round" />
+        <circle cx="8.5" cy="8.5" r="1.5" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="m21 15-5-5L5 21" stroke-linecap="round" stroke-linejoin="round" />
       </svg>
     </template>
 

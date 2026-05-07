@@ -1,5 +1,5 @@
 <template>
-  <footer class="border-t border-zinc-300 bg-white">
+  <footer class="border-t border-zinc-300 bg-white px-5 sm:px-6 lg:px-8">
     <div class="mx-auto flex max-w-6xl flex-col gap-8 py-10">
       <div class="flex flex-col justify-between gap-6 md:flex-row md:items-center">
         <div class="max-w-md">
@@ -21,7 +21,8 @@
         </nav>
       </div>
 
-      <div class="flex flex-col gap-3 border-t border-zinc-300 pt-6 text-sm text-zinc-500 md:flex-row md:items-center md:justify-between">
+      <div
+        class="flex flex-col gap-3 border-t border-zinc-300 pt-6 text-sm text-zinc-500 md:flex-row md:items-center md:justify-between">
         <p>(c) 2026 INVOICE GENERATOR. All rights reserved.</p>
         <p>Designed for fast billing, clean branding, and confident client handoff.</p>
       </div>

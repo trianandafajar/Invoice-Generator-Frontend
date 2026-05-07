@@ -1,6 +1,6 @@
 <template>
   <header :class="headerClass">
-    <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 py-4">
+    <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 py-4">
       <RouterLink to="/" class="flex items-center gap-3 text-zinc-900" aria-label="Go to INVOICE GENERATOR home">
         <LogoMark size="sm" />
         <div>

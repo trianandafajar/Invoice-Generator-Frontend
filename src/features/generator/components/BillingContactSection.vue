@@ -5,9 +5,9 @@
     description="Add payment references and the primary contact person."
   >
     <template #icon>
-      <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8">
-        <path d="M5.75 7.75h12.5v8.5H5.75z" />
-        <path d="M8 15.25h3M8 10.75h8" stroke-linecap="round" />
+      <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3" y="5" width="18" height="14" rx="2" stroke-linecap="round" stroke-linejoin="round" />
+        <path d="M3 10h18M7 15h.01M11 15h2" stroke-linecap="round" stroke-linejoin="round" />
       </svg>
     </template>
 
