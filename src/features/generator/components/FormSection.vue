@@ -12,6 +12,9 @@
         <h2 class="text-base font-semibold text-zinc-950">{{ title }}</h2>
         <p :id="descriptionId" class="mt-1 text-sm text-zinc-500">{{ description }}</p>
       </div>
+      <div v-if="$slots.actions" class="ml-4">
+        <slot name="actions" />
+      </div>
     </div>
 
     <slot />
