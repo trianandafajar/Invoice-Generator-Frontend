@@ -16,6 +16,7 @@ import GeneratorOverviewSection from '../features/generator/components/Generator
 import LineItemsSection from '../features/generator/components/LineItemsSection.vue'
 import NotesSection from '../features/generator/components/NotesSection.vue'
 import SubmitSection from '../features/generator/components/SubmitSection.vue'
+import InvoiceParser from '../components/InvoiceParser.vue'
 import type {
   BrandAssetsSectionExposed,
   InvoiceFormItem,
@@ -30,6 +31,7 @@ const lastCreatedInvoiceId = ref<number | null>(null)
 const isDownloading = ref(false)
 const isSubmitting = ref(false)
 const statusMessage = ref<StatusMessage | null>(null)
+const isParserOpen = ref(false)
 
 const form = reactive<InvoiceFormState>(createInitialForm())
 const errors = reactive<ValidationErrors>({})
@@ -128,6 +130,41 @@ function clearLogo() {
   revokeLogoPreview()
   form.logo_image_file = null
   form.logo_preview = ''
+}
+
+function handleAiParsed(data: any) {
+  if (data.invoice_number) form.invoice_number = data.invoice_number
+  if (data.process_date) form.process_date = data.process_date
+  if (data.due_date) form.due_date = data.due_date
+  if (data.customer_name) form.customer_name = data.customer_name
+  if (data.customer_id) form.customer_id = data.customer_id
+  if (data.customer_address) form.customer_address = data.customer_address
+  if (data.previous_balance !== undefined) form.previous_balance = data.previous_balance
+  if (data.contact_person) form.contact_person = data.contact_person
+  if (data.contact_phone) form.contact_phone = data.contact_phone
+  if (data.payment_account) form.payment_account = data.payment_account
+  if (data.contact_email) form.contact_email = data.contact_email
+  if (data.notes) form.notes = data.notes
+
+  if (data.items && Array.isArray(data.items)) {
+    form.items = data.items.map((item: any) => ({
+      name: item.name || '',
+      description: item.description || '',
+      qty: Number(item.qty) || 0,
+      price: Number(item.price) || 0,
+      subtotal: Number(item.subtotal) || 0,
+      amount: Number(item.amount) || 0
+    }))
+    
+    // Sync totals for all items
+    form.items.forEach(syncItemTotals)
+  }
+
+  setStatus({
+    type: 'success',
+    title: 'Data Imported',
+    message: 'Invoice data has been successfully extracted and populated.'
+  })
 }
 
 function resetForm() {
@@ -369,7 +406,7 @@ onUnmounted(() => {
           </div>
 
           <form @submit.prevent="submitForm" class=" space-y-6" novalidate>
-            <GeneratorOverviewSection :form="form" :errors="errors" @update="updateStringField" />
+            <GeneratorOverviewSection :form="form" :errors="errors" @update="updateStringField" @open-parser="isParserOpen = true" />
 
             <CustomerDetailsSection :form="form" :errors="errors" @update="updateStringField" />
 
@@ -393,5 +430,6 @@ onUnmounted(() => {
     </main>
 
     <Footer />
+    <InvoiceParser :is-open="isParserOpen" @close="isParserOpen = false" @parsed="handleAiParsed" />
   </div>
 </template>
