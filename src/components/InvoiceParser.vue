@@ -74,6 +74,20 @@
               </div>
             </label>
 
+            <!-- Example PDF Download -->
+            <div class="mt-2 flex items-center justify-between px-1">
+              <span class="text-[10px] font-medium text-zinc-400">Need a test file?</span>
+              <a 
+                href="/sample-invoice.pdf" 
+                download="sample-invoice.pdf"
+                class="text-[10px] font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1 transition-colors"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download Example PDF
+              </a>
+            </div>
+
+
             <div class="relative py-4 flex items-center gap-4">
               <div class="flex-1 h-px bg-zinc-100"></div>
               <span class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">OR PASTE TEXT</span>
@@ -91,7 +105,20 @@
                 class="form-input"
                 placeholder="Paste the raw text from an invoice here..."
               ></textarea>
+
+              <!-- Example Text Copy -->
+              <div class="mt-2 flex items-center justify-between px-1">
+                <span class="text-[10px] font-medium text-zinc-400">No invoice text?</span>
+                <button 
+                  @click="useExampleText"
+                  class="text-[10px] font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1 transition-colors cursor-pointer"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                  Use Example Text
+                </button>
+              </div>
             </label>
+
           </div>
 
           <div v-if="error" class="p-4 rounded-sm bg-red-50 border border-red-100 flex items-start gap-3">
@@ -143,6 +170,52 @@ const rawText = ref('');
 const pdfFile = ref<File | null>(null);
 const isParsing = ref(false);
 const error = ref('');
+
+const EXAMPLE_TEXT = `INVOICE #INV-2024-001
+Date: 2024-05-13
+Due Date: 2024-05-20
+
+FROM:
+Creative Studio X
+123 Design Lane, San Francisco, CA 94103
+Email: contact@creativestudiox.com
+Phone: +1 (555) 012-3456
+Bank: Central Bank, Acc: 1234567890 (Triananda Fajar)
+
+TO:
+Global Tech Corp
+Customer ID: GTC-998877
+456 Innovation Blvd, New York, NY 10001
+Contact: Sarah Jenkins (billing@globaltech.com)
+Phone: +1 (212) 555-0199
+
+ITEMS:
+1. Website Redesign
+   UI/UX overhaul and responsive development
+   Qty: 1 | Price: 2500.00
+2. Branding Package
+   Logo design and brand guidelines
+   Qty: 1 | Price: 1200.00
+3. SEO Optimization
+   Quarterly search engine optimization
+   Qty: 1 | Price: 500.00
+
+Subtotal: 4200.00
+Tax (10%): 420.00
+Previous Balance: 150.00
+Total Amount: 4770.00
+
+NOTES:
+Payment is due within 7 days.
+Please use INV-2024-001 as reference.
+
+SIGNATURE:
+Triananda Fajar`;
+
+const useExampleText = () => {
+  rawText.value = EXAMPLE_TEXT;
+  pdfFile.value = null;
+};
 
 const close = () => {
   if (!isParsing.value) {

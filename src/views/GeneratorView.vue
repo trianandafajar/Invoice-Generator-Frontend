@@ -160,6 +160,10 @@ function handleAiParsed(data: any) {
     form.items.forEach(syncItemTotals)
   }
 
+  if (data.signature_name) {
+    brandAssetsSection.value?.drawSignatureText(data.signature_name)
+  }
+
   setStatus({
     type: 'success',
     title: 'Data Imported',

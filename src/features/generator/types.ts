@@ -48,4 +48,5 @@ export interface BrandAssetsSectionExposed {
   captureSignature: () => string
   clearSignaturePad: () => void
   focusSignaturePad: () => void
+  drawSignatureText: (text: string) => void
 }

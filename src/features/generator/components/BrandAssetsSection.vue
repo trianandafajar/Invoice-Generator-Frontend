@@ -205,6 +205,30 @@ function focusSignaturePad() {
   signatureCanvas.value?.focus()
 }
 
+function drawSignatureText(text: string) {
+  if (!signatureCanvas.value || !signaturePad) {
+    return
+  }
+
+  const canvas = signatureCanvas.value
+  const ctx = canvas.getContext('2d')
+  if (ctx) {
+    signaturePad.clear()
+
+    // Draw with signature font
+    ctx.font = 'italic 32px "Dancing Script", "Brush Script MT", cursive'
+    ctx.fillStyle = '#0f172a'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+
+    // Since we scaled the context in resizeCanvas, we use the logical width/height
+    const rect = canvas.getBoundingClientRect()
+    ctx.fillText(text, rect.width / 2, rect.height / 2)
+
+    emit('updateSignature', signaturePad.toDataURL())
+  }
+}
+
 function handleLogoUpload(event: Event) {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
@@ -261,5 +285,6 @@ defineExpose<BrandAssetsSectionExposed>({
   captureSignature,
   clearSignaturePad,
   focusSignaturePad,
+  drawSignatureText,
 })
 </script>
