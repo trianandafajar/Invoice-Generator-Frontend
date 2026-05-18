@@ -20,7 +20,7 @@
     </template>
 
     <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-      <FormField id="invoice-number" label="Invoice Number" :error="errors.invoice_number">
+      <FormField id="invoice-number" label="Invoice Number" :error="errors.invoice_number" required>
         <template #default="{ describedBy, invalid }">
           <input
             id="invoice-number"
@@ -36,7 +36,7 @@
         </template>
       </FormField>
 
-      <FormField id="process-date" label="Process Date" :error="errors.process_date">
+      <FormField id="process-date" label="Process Date" :error="errors.process_date" required>
         <template #default="{ describedBy, invalid }">
           <input
             id="process-date"
@@ -50,7 +50,7 @@
         </template>
       </FormField>
 
-      <FormField id="due-date" label="Due Date" :error="errors.due_date">
+      <FormField id="due-date" label="Due Date" :error="errors.due_date" required>
         <template #default="{ describedBy, invalid }">
           <input
             id="due-date"

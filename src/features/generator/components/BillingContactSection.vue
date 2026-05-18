@@ -12,7 +12,7 @@
     </template>
 
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
-      <FormField id="previous-balance" label="Previous Balance" :error="errors.previous_balance">
+      <FormField id="previous-balance" label="Previous Balance" :error="errors.previous_balance" required>
         <template #default="{ describedBy, invalid }">
           <input
             id="previous-balance"
@@ -29,7 +29,7 @@
         </template>
       </FormField>
 
-      <FormField id="contact-person" label="Contact Person" :error="errors.contact_person">
+      <FormField id="contact-person" label="Contact Person" :error="errors.contact_person" required>
         <template #default="{ describedBy, invalid }">
           <input
             id="contact-person"
@@ -45,7 +45,7 @@
         </template>
       </FormField>
 
-      <FormField id="contact-phone" label="Contact Phone" :error="errors.contact_phone">
+      <FormField id="contact-phone" label="Contact Phone" :error="errors.contact_phone" required>
         <template #default="{ describedBy, invalid }">
           <input
             id="contact-phone"
@@ -61,7 +61,7 @@
         </template>
       </FormField>
 
-      <FormField id="payment-account" label="Payment Account" :error="errors.payment_account">
+      <FormField id="payment-account" label="Payment Account" :error="errors.payment_account" required>
         <template #default="{ describedBy, invalid }">
           <input
             id="payment-account"
@@ -81,7 +81,8 @@
         id="contact-email"
         label="Contact Email"
         :error="errors.contact_email"
-        help="Optional, but useful for billing handoff."
+        help="Useful for billing handoff."
+        required
       >
         <template #default="{ describedBy, invalid }">
           <input

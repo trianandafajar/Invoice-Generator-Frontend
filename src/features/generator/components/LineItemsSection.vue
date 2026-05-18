@@ -27,10 +27,10 @@
           </caption>
           <thead class="border-b border-zinc-300 bg-white">
             <tr>
-              <th class="table-th">Name</th>
+              <th class="table-th">Name <span class="text-rose-600 font-bold ml-0.5" aria-hidden="true">*</span></th>
               <th class="table-th">Description</th>
-              <th class="table-th">Qty</th>
-              <th class="table-th">Price</th>
+              <th class="table-th">Qty <span class="text-rose-600 font-bold ml-0.5" aria-hidden="true">*</span></th>
+              <th class="table-th">Price <span class="text-rose-600 font-bold ml-0.5" aria-hidden="true">*</span></th>
               <th class="table-th">Subtotal</th>
               <th class="table-th">Amount</th>
               <th class="table-th w-16">

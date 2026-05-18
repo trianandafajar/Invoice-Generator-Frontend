@@ -1,6 +1,9 @@
 <template>
   <div>
-    <label :for="id" class="form-label">{{ label }}</label>
+    <label :for="id" class="form-label">
+      {{ label }}
+      <span v-if="required" class="text-rose-600 font-bold ml-0.5" aria-hidden="true">*</span>
+    </label>
     <slot :described-by="describedBy" :invalid="invalid" />
     <p
       v-if="help"
@@ -28,6 +31,7 @@ const props = defineProps<{
   label: string
   error?: string
   help?: string
+  required?: boolean
 }>()
 
 const helpId = computed(() => `${props.id}-help`)

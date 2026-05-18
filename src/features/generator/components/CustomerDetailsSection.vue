@@ -11,7 +11,7 @@
     </template>
 
     <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-      <FormField id="customer-name" label="Customer Name" :error="errors.customer_name">
+      <FormField id="customer-name" label="Customer Name" :error="errors.customer_name" required>
         <template #default="{ describedBy, invalid }">
           <input
             id="customer-name"

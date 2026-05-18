@@ -211,6 +211,10 @@ function validateForm() {
     errors.due_date = 'Due Date is required.'
   }
 
+  if (!form.contact_person.trim()) {
+    errors.contact_person = 'Contact Person is required.'
+  }
+
   if (form.process_date && form.due_date) {
     const processDate = new Date(form.process_date)
     const dueDate = new Date(form.due_date)
@@ -220,7 +224,21 @@ function validateForm() {
     }
   }
 
-  if (form.contact_email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.contact_email)) {
+  if (!form.contact_phone.trim()) {
+    errors.contact_phone = 'Contact Phone is required.'
+  }
+
+  if (form.previous_balance === undefined || form.previous_balance === null || String(form.previous_balance).trim() === '') {
+    errors.previous_balance = 'Previous Balance is required.'
+  }
+
+  if (!form.payment_account.trim()) {
+    errors.payment_account = 'Payment Account is required.'
+  }
+
+  if (!form.contact_email.trim()) {
+    errors.contact_email = 'Contact Email is required.'
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.contact_email)) {
     errors.contact_email = 'Please enter a valid email address.'
   }
 
