@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import axios from 'axios'
-import { computed, onUnmounted, reactive, ref } from 'vue'
+import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import Footer from '../components/Footer.vue'
 import Header from '../components/Header.vue'
 import invoiceService from '../services/invoiceService'
@@ -26,17 +26,52 @@ import type {
   ValidationErrors,
 } from '../features/generator/types'
 
+const DRAFT_STORAGE_KEY = 'invoice-generator-draft'
+const DRAFT_SAVE_DELAY_MS = 300
+
+interface StoredInvoiceDraft {
+  invoice_number: string
+  process_date: string
+  due_date: string
+  customer_name: string
+  customer_id: string
+  customer_address: string
+  previous_balance: number
+  contact_person: string
+  contact_phone: string
+  payment_account: string
+  contact_email: string
+  notes: string
+  signature_image_path: string
+  logo_image_path: string
+  items: InvoiceFormItem[]
+}
+
 const brandAssetsSection = ref<BrandAssetsSectionExposed | null>(null)
 const lastCreatedInvoiceId = ref<number | null>(null)
 const isDownloading = ref(false)
 const isSubmitting = ref(false)
 const statusMessage = ref<StatusMessage | null>(null)
 const isParserOpen = ref(false)
+const isHydratingDraft = ref(false)
+const hasStoredDraft = ref(false)
 
 const form = reactive<InvoiceFormState>(createInitialForm())
 const errors = reactive<ValidationErrors>({})
 
 const lineItemSummary = computed(() => `${form.items.length} item${form.items.length === 1 ? '' : 's'}`)
+const visibleStatusMessage = computed(() => {
+  if (!statusMessage.value) {
+    return null
+  }
+
+  if (statusMessage.value.title === 'Draft restored' && !hasStoredDraft.value) {
+    return null
+  }
+
+  return statusMessage.value
+})
+let draftSaveTimeout: ReturnType<typeof setTimeout> | null = null
 
 function setStatus(status: StatusMessage) {
   statusMessage.value = status
@@ -114,21 +149,52 @@ function updateSignature(value: string) {
 }
 
 function revokeLogoPreview() {
-  if (form.logo_preview) {
+  if (form.logo_preview && form.logo_preview.startsWith('blob:')) {
     URL.revokeObjectURL(form.logo_preview)
   }
 }
 
-function updateLogo(selection: LogoSelection) {
+async function fileToDataUrl(file: File) {
+  return await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(typeof reader.result === 'string' ? reader.result : '')
+    reader.onerror = () => reject(reader.error ?? new Error('Failed to read the selected file.'))
+    reader.readAsDataURL(file)
+  })
+}
+
+function dataUrlToFile(dataUrl: string, filename: string) {
+  const [meta, content] = dataUrl.split(',')
+  if (!meta || !content) {
+    return null
+  }
+
+  const mimeMatch = meta.match(/data:(.*?);base64/)
+  const mimeType = mimeMatch?.[1] ?? 'image/png'
+  const binary = window.atob(content)
+  const bytes = new Uint8Array(binary.length)
+
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index)
+  }
+
+  return new File([bytes], filename, { type: mimeType })
+}
+
+async function updateLogo(selection: LogoSelection) {
   revokeLogoPreview()
+  const persistentLogo = selection.file ? await fileToDataUrl(selection.file) : ''
+
   form.logo_image_file = selection.file
-  form.logo_preview = selection.previewUrl
+  form.logo_image_path = persistentLogo
+  form.logo_preview = persistentLogo || selection.previewUrl
   clearError('logo_image_file')
 }
 
 function clearLogo() {
   revokeLogoPreview()
   form.logo_image_file = null
+  form.logo_image_path = ''
   form.logo_preview = ''
 }
 
@@ -181,6 +247,160 @@ function resetForm() {
 
   brandAssetsSection.value?.clearSignaturePad()
   resetErrors()
+  clearDraft()
+}
+
+function createDraftPayload(): StoredInvoiceDraft {
+  return {
+    invoice_number: form.invoice_number,
+    process_date: form.process_date,
+    due_date: form.due_date,
+    customer_name: form.customer_name,
+    customer_id: form.customer_id,
+    customer_address: form.customer_address,
+    previous_balance: Number(form.previous_balance) || 0,
+    contact_person: form.contact_person,
+    contact_phone: form.contact_phone,
+    payment_account: form.payment_account,
+    contact_email: form.contact_email,
+    notes: form.notes,
+    signature_image_path: form.signature_image_path,
+    logo_image_path: form.logo_image_path,
+    items: form.items.map((item) => ({
+      name: item.name,
+      description: item.description,
+      qty: Number(item.qty) || 0,
+      price: Number(item.price) || 0,
+      subtotal: Number(item.subtotal) || 0,
+      amount: Number(item.amount) || 0,
+    })),
+  }
+}
+
+function hasMeaningfulDraftContent() {
+  const hasFilledMainField = [
+    form.invoice_number,
+    form.process_date,
+    form.due_date,
+    form.customer_name,
+    form.customer_id,
+    form.customer_address,
+    form.contact_person,
+    form.contact_phone,
+    form.payment_account,
+    form.contact_email,
+    form.notes,
+    form.signature_image_path,
+    form.logo_image_path,
+  ].some((value) => value.trim().length > 0)
+
+  const hasMeaningfulBalance = Number(form.previous_balance) > 0
+  const hasMeaningfulItem = form.items.some((item) =>
+    item.name.trim().length > 0
+    || item.description.trim().length > 0
+    || Number(item.qty) !== 1
+    || Number(item.price) !== 0
+    || Number(item.subtotal) !== 0
+    || Number(item.amount) !== 0,
+  )
+
+  return hasFilledMainField || hasMeaningfulBalance || hasMeaningfulItem
+}
+
+function saveDraft() {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  if (!hasMeaningfulDraftContent()) {
+    clearDraft()
+    return
+  }
+
+  window.localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(createDraftPayload()))
+  hasStoredDraft.value = true
+}
+
+function clearDraft() {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  window.localStorage.removeItem(DRAFT_STORAGE_KEY)
+  hasStoredDraft.value = false
+}
+
+function restoreDraft() {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  const rawDraft = window.localStorage.getItem(DRAFT_STORAGE_KEY)
+  if (!rawDraft) {
+    hasStoredDraft.value = false
+    return
+  }
+
+  try {
+    const draft = JSON.parse(rawDraft) as Partial<StoredInvoiceDraft>
+    isHydratingDraft.value = true
+    hasStoredDraft.value = true
+
+    form.invoice_number = draft.invoice_number ?? ''
+    form.process_date = draft.process_date ?? ''
+    form.due_date = draft.due_date ?? ''
+    form.customer_name = draft.customer_name ?? ''
+    form.customer_id = draft.customer_id ?? ''
+    form.customer_address = draft.customer_address ?? ''
+    form.previous_balance = Number(draft.previous_balance) || 0
+    form.contact_person = draft.contact_person ?? ''
+    form.contact_phone = draft.contact_phone ?? ''
+    form.payment_account = draft.payment_account ?? ''
+    form.contact_email = draft.contact_email ?? ''
+    form.notes = draft.notes ?? ''
+    form.signature_image_path = draft.signature_image_path ?? ''
+    form.logo_image_path = draft.logo_image_path ?? ''
+    form.logo_preview = draft.logo_image_path ?? ''
+    form.logo_image_file = draft.logo_image_path
+      ? dataUrlToFile(draft.logo_image_path, 'saved-logo.png')
+      : null
+
+    const restoredItems = Array.isArray(draft.items) ? draft.items : []
+    form.items = restoredItems.length > 0
+      ? restoredItems.map((item) => ({
+        name: item.name ?? '',
+        description: item.description ?? '',
+        qty: Number(item.qty) || 0,
+        price: Number(item.price) || 0,
+        subtotal: Number(item.subtotal) || 0,
+        amount: Number(item.amount) || 0,
+      }))
+      : [createEmptyItem()]
+
+    form.items.forEach(syncItemTotals)
+
+    setStatus({
+      type: 'info',
+      title: 'Draft restored',
+      message: 'Your unfinished invoice was recovered from this browser.',
+    })
+  } catch (error) {
+    console.error('Failed to restore invoice draft:', error)
+    clearDraft()
+  } finally {
+    isHydratingDraft.value = false
+  }
+}
+
+function discardDraft() {
+  resetErrors()
+  clearStatus()
+  resetForm()
+  setStatus({
+    type: 'info',
+    title: 'Draft deleted',
+    message: 'The saved draft has been removed from this browser.',
+  })
 }
 
 function getValidItems() {
@@ -406,7 +626,32 @@ function handleSubmitError(error: unknown) {
   })
 }
 
+onMounted(() => {
+  restoreDraft()
+})
+
+watch(
+  form,
+  () => {
+    if (isHydratingDraft.value) {
+      return
+    }
+
+    if (draftSaveTimeout) {
+      clearTimeout(draftSaveTimeout)
+    }
+
+    draftSaveTimeout = window.setTimeout(() => {
+      saveDraft()
+    }, DRAFT_SAVE_DELAY_MS)
+  },
+  { deep: true },
+)
+
 onUnmounted(() => {
+  if (draftSaveTimeout) {
+    clearTimeout(draftSaveTimeout)
+  }
   revokeLogoPreview()
 })
 </script>
@@ -418,13 +663,35 @@ onUnmounted(() => {
     <main id="main-content" tabindex="-1" class="px-5 py-12 sm:px-6 lg:px-8">
       <div class="mx-auto max-w-6xl">
         <section aria-labelledby="generator-title">
-          <div v-if="statusMessage" class="mt-6 rounded-xl px-5 py-4" :class="{
-            'bg-emerald-50 text-emerald-900': statusMessage.type === 'success',
-            'bg-amber-50 text-amber-900': statusMessage.type === 'info',
-            'bg-rose-50 text-rose-900': statusMessage.type === 'error',
-          }" :role="statusMessage.type === 'error' ? 'alert' : 'status'" aria-live="polite">
-            <p class="text-sm font-medium">{{ statusMessage.title }}</p>
-            <p class="mt-1 text-sm leading-6">{{ statusMessage.message }}</p>
+          <div v-if="visibleStatusMessage" class="mt-6 rounded-xl px-5 py-4" :class="{
+            'bg-emerald-50 text-emerald-900': visibleStatusMessage.type === 'success',
+            'bg-amber-50 text-amber-900': visibleStatusMessage.type === 'info',
+            'bg-rose-50 text-rose-900': visibleStatusMessage.type === 'error',
+          }" :role="visibleStatusMessage.type === 'error' ? 'alert' : 'status'" aria-live="polite">
+            <p class="text-sm font-medium">{{ visibleStatusMessage.title }}</p>
+            <p class="mt-1 text-sm leading-6">{{ visibleStatusMessage.message }}</p>
+            <button
+              v-if="hasStoredDraft"
+              type="button"
+              class="mt-3 inline-flex rounded-lg border border-current/20 px-3 py-2 text-sm font-medium transition hover:bg-white/40"
+              @click="discardDraft"
+            >
+              Delete Draft
+            </button>
+          </div>
+
+          <div v-else-if="hasStoredDraft" class="mt-6 flex items-center justify-between gap-3 rounded-xl border border-amber-200 bg-amber-50 px-5 py-4 text-amber-900">
+            <div>
+              <p class="text-sm font-medium">Saved draft available</p>
+              <p class="mt-1 text-sm leading-6">This form is being saved automatically in your browser.</p>
+            </div>
+            <button
+              type="button"
+              class="inline-flex rounded-lg border border-amber-900/15 px-3 py-2 text-sm font-medium transition hover:bg-white/50"
+              @click="discardDraft"
+            >
+              Delete Draft
+            </button>
           </div>
 
           <form @submit.prevent="submitForm" class=" space-y-6" novalidate>
