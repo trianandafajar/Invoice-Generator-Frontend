@@ -4,7 +4,7 @@
       <RouterLink
         to="/"
         class="inline-flex items-center gap-2.5 text-zinc-900 group"
-        aria-label="Go to INVOICE GENERATOR home"
+        aria-label="Go to INVOICE GENERATOR home"                
       >
         <LogoMark size="sm" class="transition-transform group-hover:scale-105" />
         <span class="text-md font-semibold uppercase tracking-[0.05rem] text-emerald-600 whitespace-nowrap">

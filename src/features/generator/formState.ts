@@ -11,7 +11,7 @@ export function createEmptyItem(): InvoiceFormItem {
   }
 }
 
-export function createInitialForm(): InvoiceFormState {
+export function createInitialForm(overrides: Partial<InvoiceFormState> = {}): InvoiceFormState {
   return {
     invoice_number: '',
     process_date: '',
@@ -30,5 +30,6 @@ export function createInitialForm(): InvoiceFormState {
     logo_image_file: null,
     logo_preview: '',
     items: [createEmptyItem()],
+    ...overrides,
   }
 }

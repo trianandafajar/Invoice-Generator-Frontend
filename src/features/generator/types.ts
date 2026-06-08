@@ -44,9 +44,35 @@ export interface LogoSelection {
   previewUrl: string
 }
 
+export interface ReusableProfileHistoryEntry {
+  id: string
+  name: string
+  createdAt: string
+  invoice_number: string
+  process_date: string
+  due_date: string
+  customer_name: string
+  customer_id: string
+  customer_address: string
+  previous_balance: number
+  contact_person: string
+  contact_phone: string
+  payment_account: string
+  contact_email: string
+  notes: string
+  signature_image_path: string
+  logo_image_path: string
+  items: InvoiceFormItem[]
+}
+
+export interface ReusableHistoryCollection {
+  profiles: ReusableProfileHistoryEntry[]
+}
+
 export interface BrandAssetsSectionExposed {
   captureSignature: () => string
   clearSignaturePad: () => void
   focusSignaturePad: () => void
   drawSignatureText: (text: string) => void
+  loadSignatureDataUrl: (value: string) => void
 }

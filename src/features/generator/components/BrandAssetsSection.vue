@@ -37,9 +37,6 @@
           <button type="button" @click="handleClearSignature" class="app-button app-button-secondary !bg-zinc-100">
             Clear
           </button>
-          <button type="button" @click="handleSaveSignature" class="app-button app-button-primary cursor-pointer">
-            Save Signature
-          </button>
         </div>
 
         <div v-if="form.signature_image_path" class="asset-preview mt-5">
@@ -97,6 +94,7 @@ interface SignaturePadLike {
   clear: () => void
   isEmpty: () => boolean
   toDataURL: () => string
+  fromDataURL: (value: string) => void
   addEventListener: (type: string, listener: () => void) => void
 }
 
@@ -127,6 +125,7 @@ function resizeCanvas() {
   const canvas = signatureCanvas.value
   const rect = canvas.getBoundingClientRect()
   const ratio = Math.max(window.devicePixelRatio || 1, 1)
+  const previousSignature = signaturePad.isEmpty() ? '' : signaturePad.toDataURL()
 
   canvas.width = rect.width * ratio
   canvas.height = rect.height * ratio
@@ -138,6 +137,10 @@ function resizeCanvas() {
   }
 
   signaturePad.clear()
+
+  if (previousSignature) {
+    signaturePad.fromDataURL(previousSignature)
+  }
 }
 
 async function initSignaturePad() {
@@ -166,27 +169,6 @@ function captureSignature() {
   return signaturePad.toDataURL()
 }
 
-function handleSaveSignature() {
-  const signatureDataUrl = captureSignature()
-
-  if (!signatureDataUrl) {
-    emit('announce', {
-      type: 'info',
-      title: 'No signature saved yet',
-      message: 'Draw a signature first, or continue without one if it is not needed.',
-    })
-    focusSignaturePad()
-    return
-  }
-
-  emit('updateSignature', signatureDataUrl)
-  emit('announce', {
-    type: 'success',
-    title: 'Signature saved',
-    message: 'The current signature will be included in the invoice export.',
-  })
-}
-
 function handleClearSignature() {
   clearSignaturePad()
   emit('announce', {
@@ -199,6 +181,20 @@ function handleClearSignature() {
 function clearSignaturePad() {
   signaturePad?.clear()
   emit('updateSignature', '')
+}
+
+function loadSignatureDataUrl(value: string) {
+  if (!signaturePad) {
+    return
+  }
+
+  signaturePad.clear()
+
+  if (!value) {
+    return
+  }
+
+  signaturePad.fromDataURL(value)
 }
 
 function focusSignaturePad() {
@@ -286,5 +282,6 @@ defineExpose<BrandAssetsSectionExposed>({
   clearSignaturePad,
   focusSignaturePad,
   drawSignatureText,
+  loadSignatureDataUrl,
 })
 </script>

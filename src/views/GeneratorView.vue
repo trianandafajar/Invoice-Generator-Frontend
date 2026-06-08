@@ -22,11 +22,14 @@ import type {
   InvoiceFormItem,
   InvoiceFormState,
   LogoSelection,
+  ReusableHistoryCollection,
+  ReusableProfileHistoryEntry,
   StatusMessage,
   ValidationErrors,
 } from '../features/generator/types'
 
 const DRAFT_STORAGE_KEY = 'invoice-generator-draft'
+const REUSABLE_HISTORY_STORAGE_KEY = 'invoice-generator-reusable-history'
 const DRAFT_SAVE_DELAY_MS = 300
 
 interface StoredInvoiceDraft {
@@ -55,6 +58,9 @@ const statusMessage = ref<StatusMessage | null>(null)
 const isParserOpen = ref(false)
 const isHydratingDraft = ref(false)
 const hasStoredDraft = ref(false)
+const reusableHistory = ref<ReusableHistoryCollection>({
+  profiles: [],
+})
 
 const form = reactive<InvoiceFormState>(createInitialForm())
 const errors = reactive<ValidationErrors>({})
@@ -148,6 +154,157 @@ function updateSignature(value: string) {
   clearError('signature_image_path')
 }
 
+function createHistoryId() {
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+}
+
+function normalizeStoredItem(item: Partial<InvoiceFormItem>): InvoiceFormItem {
+  const normalized = {
+    name: item.name ?? '',
+    description: item.description ?? '',
+    qty: Number(item.qty) || 0,
+    price: Number(item.price) || 0,
+    subtotal: Number(item.subtotal) || 0,
+    amount: Number(item.amount) || 0,
+  }
+
+  syncItemTotals(normalized)
+  return normalized
+}
+
+function persistReusableHistory() {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  try {
+    window.localStorage.setItem(REUSABLE_HISTORY_STORAGE_KEY, JSON.stringify(reusableHistory.value))
+  } catch (error) {
+    console.error('Failed to save reusable invoice history:', error)
+  }
+}
+
+function createReusableProfile(items = getValidItems()): ReusableProfileHistoryEntry {
+  const createdAt = new Date().toISOString()
+  const name = form.contact_person.trim()
+    || form.payment_account.trim()
+    || form.customer_name.trim()
+    || `Profile ${new Intl.DateTimeFormat('id-ID', {
+      day: '2-digit',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit',
+    }).format(new Date(createdAt))}`
+
+  return {
+    id: createHistoryId(),
+    name,
+    createdAt,
+    invoice_number: form.invoice_number,
+    process_date: form.process_date,
+    due_date: form.due_date,
+    customer_name: form.customer_name,
+    customer_id: form.customer_id,
+    customer_address: form.customer_address,
+    previous_balance: Number(form.previous_balance) || 0,
+    contact_person: form.contact_person,
+    contact_phone: form.contact_phone,
+    payment_account: form.payment_account,
+    contact_email: form.contact_email,
+    notes: form.notes,
+    signature_image_path: form.signature_image_path,
+    logo_image_path: form.logo_image_path,
+    items: items.map(normalizeStoredItem),
+  }
+}
+
+function hasMeaningfulReusableProfile(profile: ReusableProfileHistoryEntry) {
+  return [
+    profile.invoice_number,
+    profile.process_date,
+    profile.due_date,
+    profile.customer_name,
+    profile.customer_id,
+    profile.customer_address,
+    profile.contact_person,
+    profile.contact_phone,
+    profile.payment_account,
+    profile.contact_email,
+    profile.notes,
+    profile.signature_image_path,
+    profile.logo_image_path,
+  ].some((value) => value.trim().length > 0) || profile.items.length > 0
+}
+
+function saveReusableProfile(items = getValidItems()) {
+  const profile = createReusableProfile(items)
+
+  if (!hasMeaningfulReusableProfile(profile)) {
+    return
+  }
+
+  reusableHistory.value.profiles = [
+    profile,
+    ...reusableHistory.value.profiles,
+  ]
+  persistReusableHistory()
+}
+
+function applyReusableProfile(profile: ReusableProfileHistoryEntry) {
+  revokeLogoPreview()
+  form.invoice_number = profile.invoice_number
+  form.process_date = profile.process_date
+  form.due_date = profile.due_date
+  form.customer_name = profile.customer_name
+  form.customer_id = profile.customer_id
+  form.customer_address = profile.customer_address
+  form.previous_balance = Number(profile.previous_balance) || 0
+  form.contact_person = profile.contact_person
+  form.contact_phone = profile.contact_phone
+  form.payment_account = profile.payment_account
+  form.contact_email = profile.contact_email
+  form.notes = profile.notes
+  form.signature_image_path = profile.signature_image_path
+  form.logo_image_path = profile.logo_image_path
+  form.logo_preview = profile.logo_image_path
+  form.logo_image_file = profile.logo_image_path
+    ? dataUrlToFile(profile.logo_image_path, 'saved-logo.png')
+    : null
+  form.items = profile.items.length > 0
+    ? profile.items.map(normalizeStoredItem)
+    : [createEmptyItem()]
+
+  syncSignatureAsset()
+  ;[
+    'invoice_number',
+    'process_date',
+    'due_date',
+    'customer_name',
+    'customer_id',
+    'customer_address',
+    'previous_balance',
+    'contact_person',
+    'contact_phone',
+    'payment_account',
+    'contact_email',
+    'notes',
+    'signature_image_path',
+    'logo_image_file',
+    'items',
+  ]
+    .forEach(clearError)
+  setStatus({
+    type: 'success',
+    title: 'Profile applied',
+    message: `${profile.name} was loaded into the reusable invoice fields.`,
+  })
+}
+
+function removeReusableProfile(id: string) {
+  reusableHistory.value.profiles = reusableHistory.value.profiles.filter((profile) => profile.id !== id)
+  persistReusableHistory()
+}
+
 function revokeLogoPreview() {
   if (form.logo_preview && form.logo_preview.startsWith('blob:')) {
     URL.revokeObjectURL(form.logo_preview)
@@ -237,6 +394,10 @@ function handleAiParsed(data: any) {
   })
 }
 
+function syncSignatureAsset() {
+  brandAssetsSection.value?.loadSignatureDataUrl(form.signature_image_path)
+}
+
 function resetForm() {
   revokeLogoPreview()
   const freshState = createInitialForm()
@@ -245,7 +406,7 @@ function resetForm() {
     ; (form[key] as InvoiceFormState[typeof key]) = freshState[key]
   }
 
-  brandAssetsSection.value?.clearSignaturePad()
+  syncSignatureAsset()
   resetErrors()
   clearDraft()
 }
@@ -330,6 +491,52 @@ function clearDraft() {
   hasStoredDraft.value = false
 }
 
+function restoreReusableHistory() {
+  if (typeof window === 'undefined') {
+    return
+  }
+
+  const rawReusableHistory = window.localStorage.getItem(REUSABLE_HISTORY_STORAGE_KEY)
+  if (!rawReusableHistory) {
+    return
+  }
+
+  try {
+    const parsed = JSON.parse(rawReusableHistory) as Partial<ReusableHistoryCollection>
+    reusableHistory.value = {
+      profiles: Array.isArray(parsed.profiles)
+        ? parsed.profiles
+          .filter((entry) => entry?.id && entry.name)
+          .map((entry) => ({
+            id: entry.id,
+            name: entry.name,
+            createdAt: entry.createdAt ?? new Date().toISOString(),
+            invoice_number: entry.invoice_number ?? '',
+            process_date: entry.process_date ?? '',
+            due_date: entry.due_date ?? '',
+            customer_name: entry.customer_name ?? '',
+            customer_id: entry.customer_id ?? '',
+            customer_address: entry.customer_address ?? '',
+            previous_balance: Number(entry.previous_balance) || 0,
+            contact_person: entry.contact_person ?? '',
+            contact_phone: entry.contact_phone ?? '',
+            payment_account: entry.payment_account ?? '',
+            contact_email: entry.contact_email ?? '',
+            notes: entry.notes ?? '',
+            signature_image_path: entry.signature_image_path ?? '',
+            logo_image_path: entry.logo_image_path ?? '',
+            items: Array.isArray(entry.items)
+              ? entry.items.map(normalizeStoredItem)
+              : [],
+          }))
+        : [],
+    }
+  } catch (error) {
+    console.error('Failed to restore reusable invoice history:', error)
+    window.localStorage.removeItem(REUSABLE_HISTORY_STORAGE_KEY)
+  }
+}
+
 function restoreDraft() {
   if (typeof window === 'undefined') {
     return
@@ -384,6 +591,7 @@ function restoreDraft() {
       title: 'Draft restored',
       message: 'Your unfinished invoice was recovered from this browser.',
     })
+    syncSignatureAsset()
   } catch (error) {
     console.error('Failed to restore invoice draft:', error)
     clearDraft()
@@ -580,6 +788,8 @@ async function submitForm() {
         : 'The invoice was created successfully.',
     })
 
+    saveReusableProfile(validItems)
+
     if (createdInvoiceId) {
       await downloadPdf(createdInvoiceId)
     }
@@ -627,6 +837,7 @@ function handleSubmitError(error: unknown) {
 }
 
 onMounted(() => {
+  restoreReusableHistory()
   restoreDraft()
 })
 
@@ -695,7 +906,15 @@ onUnmounted(() => {
           </div>
 
           <form @submit.prevent="submitForm" class=" space-y-6" novalidate>
-            <GeneratorOverviewSection :form="form" :errors="errors" @update="updateStringField" @open-parser="isParserOpen = true" />
+            <GeneratorOverviewSection
+              :form="form"
+              :errors="errors"
+              :profiles="reusableHistory.profiles"
+              @update="updateStringField"
+              @open-parser="isParserOpen = true"
+              @use-profile="applyReusableProfile"
+              @remove-profile="removeReusableProfile"
+            />
 
             <CustomerDetailsSection :form="form" :errors="errors" @update="updateStringField" />
 
@@ -708,8 +927,8 @@ onUnmounted(() => {
               @update-signature="updateSignature" @update-logo="updateLogo" @clear-logo="clearLogo"
               @announce="setStatus" @clear-error="clearError" />
 
-            <LineItemsSection :items="form.items" :errors="errors" @add="addItem" @remove="removeItem"
-              @update-text="updateItemText" @update-number="updateItemNumber" />
+            <LineItemsSection :items="form.items" :errors="errors" @add="addItem"
+              @remove="removeItem" @update-text="updateItemText" @update-number="updateItemNumber" />
 
             <SubmitSection :is-submitting="isSubmitting" :is-downloading="isDownloading"
               :last-created-invoice-id="lastCreatedInvoiceId" @download="downloadPdf()" />
