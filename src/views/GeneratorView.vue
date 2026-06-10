@@ -909,8 +909,11 @@ onUnmounted(() => {
             <GeneratorOverviewSection
               :form="form"
               :errors="errors"
+              :profiles="reusableHistory.profiles"
               @update="updateStringField"
               @open-parser="isParserOpen = true"
+              @use-profile="applyReusableProfile"
+              @remove-profile="removeReusableProfile"
             />
 
             <CustomerDetailsSection :form="form" :errors="errors" @update="updateStringField" />
@@ -928,8 +931,8 @@ onUnmounted(() => {
               @remove="removeItem" @update-text="updateItemText" @update-number="updateItemNumber" />
 
             <SubmitSection :is-submitting="isSubmitting" :is-downloading="isDownloading"
-              :last-created-invoice-id="lastCreatedInvoiceId" :profiles="reusableHistory.profiles"
-              @download="downloadPdf()" @use-profile="applyReusableProfile" @remove-profile="removeReusableProfile" />
+              :last-created-invoice-id="lastCreatedInvoiceId"
+              @download="downloadPdf()" />
           </form>
         </section>
       </div>
